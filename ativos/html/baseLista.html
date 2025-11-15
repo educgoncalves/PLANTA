@@ -1,0 +1,44 @@
+﻿<!doctype html>
+<html>  
+<!-- Bootstrap 5.3.2 CSS -->
+<link rel="stylesheet" href="../ativos/bootstrap_532/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="../ativos/css/sivLista.css">
+<!-- *************************************************** -->
+<head>
+	<title>GEAR - $titulo</title>
+    <meta http-equiv="content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="pragma" content="no-cache">
+    <meta http-equiv="cache-control" content="no-cache, must-revalidate">
+    <meta http-equiv="expires" content="0">
+    <title>$titulo</title>
+</head>
+<body onload="moveRelogio()">
+    <div id="divMonitor">
+		<div id="divCabecalho">
+			<div class="linhaCabecalho">
+				<div id="divAeroporto" class="col-md-2 d-flex justify-content-start">$siglaAeroporto</div>
+				<div id="divTitulo" class="col-md-8 d-flex justify-content-center">$titulo</div>
+				<div id="divRelogio" class="col-md-2 d-flex justify-content-end"></div>
+			</div>
+			<div class="linhaCabecalho">
+				<div id="divDecolamais" class="col-md-2 d-flex justify-content-start">
+					<img  class="rounded-pill" src="../ativos/img/logo_pequeno.png"/></div>
+				<div id="divSubTitulo" class="col-md-8 d-flex justify-content-center">$subTitulo</div>
+				<div id="divPagina" class="col-md-2 d-flex justify-content-end">Página $page</div>                
+			</div> 
+		</div>
+		<div id="divTabela">$tabela</div>
+    </div>  
+</body>
+</html>
+<script>
+    function moveRelogio(){
+        momentoAtual = new Date();
+        hora = momentoAtual.getHours();
+        minuto = momentoAtual.getMinutes();
+        if (hora <= 9) { hora = "0" + hora; }
+        if (minuto <= 9) { minuto = "0" + minuto; }
+        document.getElementById("divRelogio").innerHTML =  hora + ":" + minuto;
+        setTimeout("moveRelogio()",1000);
+    }
+</script>

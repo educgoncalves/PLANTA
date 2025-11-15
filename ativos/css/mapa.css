@@ -1,0 +1,6 @@
+.base { width:800px; height:430px; background-color: rgba(0, 255, 4, 0);}
+.mapa { width:100%; height:100%; background-color: rgba(255,0,0,0.1); background-repeat: no-repeat;}
+.grade { width:10px; height:10px; background-color: rgba(30, 0, 255, 0); background-repeat: no-repeat; background-size: cover; 
+        border-width: 1px; border-style: solid; border-color: rgba(0, 0, 0, 0); margin: 0 0 0 0; padding: 0 0 0 0; }
+.local { width:10px; height:10px; background-color: rgba(245, 11, 31, 0.749); border: 1px solid black; }
+.salta { page-break-before: always; }

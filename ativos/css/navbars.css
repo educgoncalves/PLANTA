@@ -1,0 +1,45 @@
+body {
+  padding-bottom: 20px;
+}
+
+.navbar {
+  margin-bottom: 20px;
+}
+
+/* .nav-link { 
+  font-size: 40px;
+} */
+
+/* Ajustes para o menu */
+.nav-link {
+  font-weight: bold;
+  font-size:      1.2em;
+}
+.nav-link:hover { 
+  color:            gray;
+  background-color: lightgray; 
+  text-shadow:      none;
+}
+.dropdown-menu > li > a {
+  color:          gray;
+  background:     white;
+  /* border-bottom:  2px solid lightgray; */
+  font-size:      1.2em;
+}
+/* Ajustes para o submenu */
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu .dropdown-menu {
+  top: 10%;
+  left: 95%;
+  margin-top: -1px;
+}
+.navbar-nav li:hover > ul.dropdown-menu {
+  display: block;
+}
+.navbar-nav li:hover > ul.dropdown-especial {
+  display: block;
+  top: 10%;
+  left: 95%;
+}

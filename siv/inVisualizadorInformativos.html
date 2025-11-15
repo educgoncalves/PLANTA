@@ -1,0 +1,85 @@
+﻿<!doctype html>
+<html>  
+<head>
+	<title>GEAR - SIV Visualizador</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            height: 100%;
+            width: 100%;
+            background-color: #333; 
+            color: white;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #erro {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            font-size: 1.5em;
+        }
+
+        #siv {
+            border: none;
+            width: 100%;
+            height: 100%;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <p id="erro">
+        Nenhuma página foi especificada ou a página não pôde ser carregada.<br>
+        Por favor, use o formato: <code>SIV_visualizador.html?url=../siv/endereco-da-pagina.html</code>
+    </p>
+
+    <iframe id="siv" src=""></iframe> 
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const iframe = document.getElementById('siv');
+            const erro = document.getElementById('erro');
+
+            // Pegando o parâmetro do nome da página
+            const params = new URLSearchParams(window.location.search);
+            const pagina = params.get('pagina'); 
+
+            // Obter e validar o parâmetro de URL
+            if (!pagina) {
+                erro.style.display = 'block';
+                return;
+            }
+
+            // Função para recarregar o iframe e verificar o status
+            const reloadIframe = () => {
+                iframe.src = ''; 
+                iframe.src = pagina;
+            };
+
+            // Evento para verificar se a página carregou com sucesso
+            iframe.onload = () => {
+                iframe.style.display = 'block';
+                erro.style.display = 'none';
+            };
+
+            // Evento de erro de carregamento (nem todos os navegadores disparam este evento)
+            iframe.onerror = () => {
+                iframe.style.display = 'none';
+                erro.style.display = 'block';
+                erro.textContent = 'Erro ao carregar a página. Verifique o URL.';
+            };
+                
+            // Carregando a página
+            reloadIframe();
+            setInterval(reloadIframe, 60000); 
+        });
+    </script>
+</body>
+</html>

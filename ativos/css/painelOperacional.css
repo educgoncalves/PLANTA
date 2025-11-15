@@ -1,0 +1,23 @@
+table {
+  width: 100%;
+  border-collapse: collapse;
+  /*text-align: center;*/
+}
+
+th {
+  position: sticky;
+  top: 0;
+}
+
+.titulo { font-family: Arial; font-size: 20px; font-weight: bold; height:50px; color: var(--white);}
+.relogio { font-family: Arial; font-size: 20px; font-weight: bold; height:50px; color: var(--white);}
+.header { font-family: Arial; font-size: 12px; font-weight: normal; color: var(--white); padding: 1px 1px 1px 5px;}
+.painel-header { font-size: .75rem; }
+
+#chegadas {
+  max-width: 100%;
+  min-width: 0%;
+  transition: all 0.35s ease-in-out;
+  box-shadow: 0 0 35px 0 rgba(49, 57, 66, 0.5);
+  z-index: 1111;
+}

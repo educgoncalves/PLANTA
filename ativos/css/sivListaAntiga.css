@@ -1,0 +1,19 @@
+/* Atualizados  */
+body { overflow-y:hidden; overflow-x:hidden; margin:0 0 0 0; line-height: 1.25;}
+
+/* #abs, absbody { overflow: hidden; position: absolute; vertical-align: center;}
+div { overflow: hidden; position: relative; vertical-align: center;} */
+
+#divAeroporto { font-family: Arial; font-size: 40px; font-weight: bold; color: #FFFFFF;}
+#divTitulo { font-family: Arial; font-size: 40px; font-weight: bold; color: #FFFFFF;}
+#divRelogio { font-family: Arial; font-size: 40px; font-weight: bold; color: #FFFFFF;}
+#divPagina { font-family: Arial; font-size: 16px; font-weight: normal; color: #FFFFFF;}
+#divRodape { background-image: url('../img/logo_medio.png'); background-repeat: no-repeat; border-radius: 5px; }
+
+.cia { width: 44px; height: 22px; }
+.monitor { position: relative; height: 100vh; width: 100vw; background-color: #9f9f9f; overflow: hidden; }
+.cabecalhoTela { width:100%; height:11%; padding: 0rem 1.5rem; background-color: rgba(0,0,255,0.1);}
+.tabelaDados { width:100%; height:100%; white-space: nowrap; overflow: hidden; background-color: rgba(0,0,255,0.1);}
+.tdCabecalho { font-family: Arial; font-size: 14px; font-weight: bold; text-align: center; color: #FFFFFF;}
+.tdDadosGrI { font-family: Arial; font-size: 26px; font-weight: bold; color: #FFFFFF; padding: 0; margin: 0;}
+.tdDadosGrII { font-family: Arial; font-size: 26px; font-weight: bold; color: #FFFFFF;}
