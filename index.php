@@ -71,7 +71,7 @@ metaTagsTema(true);
 				<form action="#" method="post" id="index">
 				<input type="hidden" name="evento" id="hdEvento" value=""/>
 					<img class="mb-4 rounded-pill" src="ativos/img/logo_encode.png" alt="logo" style="width:100%">
-					<h4 class="mb-3">Gerenciamento de Plantas de Produção</h4>
+					<h4 class="mb-3">Gerenciamento de Plantas de  - Teste</h4>
 					<div class="form-floating">
 						<input type="text" class="form-control cpoObrigatorio input-lg" id="txUsuario" name="usuario" placeholder="Usuário" autocomplete="off">
 						<label for="txUsuario">Conta</label>
