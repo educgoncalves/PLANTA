@@ -71,7 +71,7 @@ require_once("../suporte/suConexao.php");
 
         // Consistência das funções e seus parâmetros
         $_conexao = conexao();
-        $_comando = "SELECT us.id FROM gear_usuarios us WHERE us.usuario = '".$_usuario.
+        $_comando = "SELECT us.id FROM planta_usuarios us WHERE us.usuario = '".$_usuario.
                     "' AND us.senha = sha1('".$_senha."') AND us.situacao = 'ATV' LIMIT 1";
         $_sql = $_conexao->prepare($_comando);
         if ($_sql->execute()) {

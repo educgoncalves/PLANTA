@@ -64,14 +64,14 @@ require_once("../suporte/suConexao.php");
         }
 
         // Validar parâmetros obrigatórios comuns a todas as funções
-        $_chaves = array('sistema','aeroporto','grupo');
+        $_chaves = array('sistema','site','grupo');
         foreach($_chaves as $_chave){
             if (!array_key_exists($_chave, $_dados)) {
                 throw new PDOException("API ".$_api." 003 - [".$_funcao."] - Faltam parâmetros obrigatórios para executar!");
             }
         }    
         $_sistema = $_dados['sistema'];
-        $_aeroporto = $_dados['aeroporto'];
+        $_site = $_dados['site'];
         $_grupo = $_dados['grupo'];
 
         // Consistência das funções e seus parâmetros
@@ -94,13 +94,10 @@ require_once("../suporte/suConexao.php");
         try {    
             $_conexao = conexao();
             $_comando = "SELECT me.tipo, me.formulario, me.modulo, me.descricao, me.href, me.target, me.atalho, me.iconeSVG
-                        FROM gear_menus me 
-                        WHERE me.sistema = '".$_sistema.
-                        "'  AND NOT EXISTS (SELECT re.formulario ". 
-                        " FROM gear_restricoes re WHERE re.idAeroporto = ".
-                        $_aeroporto." AND re.sistema = me.sistema ". 
-                        " AND re.formulario = me.formulario AND re.grupo = '".$_grupo.
-                        "') ORDER BY me.sistema, me.ordem, me.formulario";
+                        FROM planta_menus me 
+                        WHERE me.sistema = '".$_sistema."'  AND NOT EXISTS (SELECT re.formulario ". 
+                        " FROM planta_restricoes re WHERE re.idSite = ".$_site." AND re.sistema = me.sistema ". 
+                        " AND re.formulario = me.formulario AND re.grupo = '".$_grupo."') ORDER BY me.sistema, me.ordem, me.formulario";
             $_sql = $_conexao->prepare($_comando);
             if ($_sql->execute()) {
                 if ($_sql->rowCount() > 0) {

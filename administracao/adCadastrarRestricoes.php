@@ -13,8 +13,8 @@ $_paginacao = carregarGets('paginacao', 'NAO');
 $_limite = carregarGets('limite', $_SESSION['plantaRegPorPagina']); 
 
 // Recuperando as informações do Aeroporto
-$utcAeroporto = $_SESSION['plantaUTCAeroporto'];
-$siglaAeroporto = $_SESSION['plantaAeroporto'];
+$utcAeroporto = $_SESSION['plantaUTCSite'];
+$siglaAeroporto = $_SESSION['plantaSite'];
 
 // Recebendo eventos e parametros para executar os procedimentos
 $evento = carregarGets('evento',carregarPosts('evento'));
@@ -25,7 +25,7 @@ $parametros = array('evento'=>$evento);
 $limparCampos = false;
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $id = carregarPosts('id'); 
-    $aeroporto = carregarPosts('aeroporto'); 
+    $aeroporto = carregarPosts('site'); 
     $formulario = carregarPosts('formulario'); 
     $grupo = carregarPosts('grupo'); 
 
@@ -40,22 +40,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 // Salvando as informações
 if ($evento == "salvar") {
 	// Verifica se campos estão preenchidos
-    $erros = camposPreenchidos(['aeroporto','formulario','grupo']); 
+    $erros = camposPreenchidos(['site','formulario','grupo']); 
     if (!$erros) {
         try {
             $conexao = conexao();
             $array = explode('#', $formulario);
             if ($id != "") {
-                $comando = "UPDATE gear_restricoes SET idAeroporto = ".$aeroporto.", sistema = '".$array[0]."', formulario = '".$array[1].
+                $comando = "UPDATE planta_restricoes SET idSite = ".$aeroporto.", sistema = '".$array[0]."', formulario = '".$array[1].
                             "', grupo = '".$grupo."', cadastro = UTC_TIMESTAMP() WHERE id = ".$id;
             } else {
-                $comando = "INSERT INTO gear_restricoes (idAeroporto, sistema, formulario, grupo, cadastro) VALUES (".
+                $comando = "INSERT INTO planta_restricoes (idSite, sistema, formulario, grupo, cadastro) VALUES (".
                             $aeroporto.", '".$array[0]."', '".$array[1]."', '".$grupo."', UTC_TIMESTAMP())";
             }
             $sql = $conexao->prepare($comando);               
             if ($sql->execute()) {
                 if ($sql->rowCount() > 0) {
-                    gravaDLog("gear_restricoes", ($id != "" ? "Alteração" : "Inclusão"), $_SESSION['plantaAeroporto'], 
+                    gravaDLog("planta_restricoes", ($id != "" ? "Alteração" : "Inclusão"), $_SESSION['plantaSite'], 
                                 $_SESSION['plantaUsuario'], ($id != "" ? $id  : $conexao->lastInsertId()), $comando);
                     montarMensagem("success",array("Registro ".($id != "" ? "alterado" : "incluído")." com sucesso!"));
                     $id = null;
@@ -78,12 +78,12 @@ if ($evento == "salvar") {
 if ($evento == "recuperar" && $id != "") {
     try {
         $conexao = conexao();
-        $comando = "SELECT * FROM gear_restricoes WHERE id = ".$id;
+        $comando = "SELECT * FROM planta_restricoes WHERE id = ".$id;
         $sql = $conexao->prepare($comando);     
         if ($sql->execute()) {
             $registros = $sql->fetchAll(PDO::FETCH_ASSOC);
             foreach ($registros as $dados) {
-                $aeroporto = $dados['idAeroporto'];
+                $aeroporto = $dados['idSite'];
                 $formulario = $dados['sistema']."#".$dados['formulario'];
                 $grupo = $dados['grupo'];
             }
@@ -100,10 +100,10 @@ if ($evento == "recuperar" && $id != "") {
 if ($evento == "excluir" && $id != "") {
     try {
         $conexao = conexao();
-        $comando = "DELETE FROM gear_restricoes WHERE id = ".$id;
+        $comando = "DELETE FROM planta_restricoes WHERE id = ".$id;
         $sql = $conexao->prepare($comando); 
         if ($sql->execute()){
-            gravaDLog("gear_restricoes", "Exclusão", $_SESSION['plantaAeroporto'], $_SESSION['plantaUsuario'], $id, $comando);            
+            gravaDLog("planta_restricoes", "Exclusão", $_SESSION['plantaSite'], $_SESSION['plantaUsuario'], $id, $comando);            
             montarMensagem("success",array("Registro excluído com sucesso!"));
             $limparCampos = true;
     } else {
@@ -281,7 +281,7 @@ $titulo = "Restrições para Formulários";
                 if (!isEmpty($(this).val())) {
                     switch ($(this).attr('id')) {
                         case "pslAeroporto":
-                            filtro += " AND re.idAeroporto = "+$("#pslAeroporto").val();
+                            filtro += " AND re.idSite = "+$("#pslAeroporto").val();
                             descricaoFiltro += " <br>Aeroporto : "+$("#pslAeroporto :selected").text();
                             break;
                         case "pslSistema":
@@ -343,7 +343,7 @@ $titulo = "Restrições para Formulários";
         // Adequações para o cadastro
         await suCarregarSelectTodos('AcessosGrupos','#slGrupo', $('#hdGrupo').val(),'','Cadastrar');
         await adCarregarSelectMenusFormulario('#slFormulario', $('#hdFormulario').val(),'','Cadastrar');
-        await suCarregarSelectTodos('AeroportosClientes','#slAeroporto', $('#hdAeroporto').val(), '','Cadastrar');
+        await suCarregarSelectTodos('AeroportosClientes','#slAeroporto', $('#hdSite').val(), '','Cadastrar');
         await adCarregarRestricoes('Cadastrar', pesquisaFiltro, pesquisaOrdem, pesquisaDescricao, parseInt($('#hdPagina').val()), parseInt($('#hdLimite').val()));
         $("#slAeroporto").focus();
     });

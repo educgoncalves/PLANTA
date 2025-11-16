@@ -4,7 +4,7 @@ require_once("suConexao.php");
 
 // Enviar email da vistoria de veículos pelo google
 //
-function enviarEmail($_sistema, $_aeroporto, $_usuario, $_email, $_assunto, $_mensagem, $_anexo = ''){
+function enviarEmail($_sistema, $_site, $_usuario, $_email, $_assunto, $_mensagem, $_anexo = ''){
 	$_retorno = false;
 
     // Enviando o email
@@ -82,8 +82,8 @@ function enviarEmail($_sistema, $_aeroporto, $_usuario, $_email, $_assunto, $_me
 					$_mailDestino = 'suporte@decolamais.com.br';
 					$_conexao = conexao();
 					$_comando = "SELECT DISTINCT us.email 
-								FROM gear_usuarios us 
-								LEFT JOIN gear_acessos ac ON ac.idUsuario = us.id
+								FROM planta_usuarios us 
+								LEFT JOIN planta_acessos ac ON ac.idUsuario = us.id
 								WHERE us.situacao = 'ATV' AND ac.grupo = 'ADM'";
 					$_sql = $_conexao->prepare($_comando);
 					if ($_sql->execute()) {
@@ -106,7 +106,7 @@ function enviarEmail($_sistema, $_aeroporto, $_usuario, $_email, $_assunto, $_me
 
 		//Set the subject line
 		$_mail->Subject = $_sistema.
-						($_aeroporto != "" ? " - ".$_aeroporto : "").
+						($_site != "" ? " - ".$_site : "").
 						($_usuario != "" ? " - ".$_usuario : "").
 						($_assunto != "" ? " - ".$_assunto : "");
 
@@ -139,7 +139,7 @@ function enviarEmail($_sistema, $_aeroporto, $_usuario, $_email, $_assunto, $_me
 	return $_retorno;
 } 
 
-function enviarTitanEmail($_sistema, $_aeroporto, $_usuario, $_email, $_assunto, $_mensagem, $_anexo = ''){
+function enviarTitanEmail($_sistema, $_site, $_usuario, $_email, $_assunto, $_mensagem, $_anexo = ''){
 	$_retorno = false;
 
     // Enviando o email
@@ -196,8 +196,8 @@ function enviarTitanEmail($_sistema, $_aeroporto, $_usuario, $_email, $_assunto,
 		try {
             $_conexao = conexao();
 			$_comando = "SELECT DISTINCT us.email 
-						FROM gear_usuarios us 
-						LEFT JOIN gear_acessos ac ON ac.idUsuario = us.id
+						FROM planta_usuarios us 
+						LEFT JOIN planta_acessos ac ON ac.idUsuario = us.id
 						WHERE us.situacao = 'ATV' AND ac.grupo = 'ADM'";
 			$_sql = $_conexao->prepare($_comando);
 			if ($_sql->execute()) {
@@ -218,7 +218,7 @@ function enviarTitanEmail($_sistema, $_aeroporto, $_usuario, $_email, $_assunto,
 
 		//Set the subject line
 		$_mail->Subject = $_sistema.
-						($_aeroporto != "" ? " - ".$_aeroporto : "").
+						($_site != "" ? " - ".$_site : "").
 						($_usuario != "" ? " - ".$_usuario : "").
 						($_assunto != "" ? " - ".$_assunto : "");
 

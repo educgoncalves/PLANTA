@@ -10,10 +10,14 @@ $evento = carregarGets('evento',carregarPosts('evento'));
 $collapse = ($evento != "recuperar" ? "hide" : "show");
 $parametros = array('evento'=>$evento);
 
+// Recuperando as informações do Site
+$utcSite = $_SESSION['plantaUTCSite'];
+$siglaSite = $_SESSION['plantaSite'];
+
 // Limpar logs
 if ($evento == "excluir") {
-    // Data e hora local do aeroporto
-    $identificacao = dateTimeUTC($utcAeroporto)->format('Ymd_His');
+    // Data e hora local do site
+    $identificacao = dateTimeUTC($utcSite)->format('Ymd_His');
     executarLimparLogs($identificacao,$_SESSION['plantaUsuario'], 'MNL');
 
     // Verifica se tem arquivo log gerado

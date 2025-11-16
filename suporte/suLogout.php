@@ -6,7 +6,7 @@
 
 	// Desativa conexão
 	//
-	desativarConexao($_SESSION['plantaIDAeroporto'], $_SESSION['plantaSistema'], $_SESSION['plantaUsuario'], $_SESSION['plantaIPCliente']);
+	desativarConexao($_SESSION['plantaIDSite'], $_SESSION['plantaSistema'], $_SESSION['plantaUsuario'], $_SESSION['plantaIPCliente']);
 
 	session_start(); // Inicia a sessão
 	session_destroy(); // Destrói a sessão limpando todos os valores salvos

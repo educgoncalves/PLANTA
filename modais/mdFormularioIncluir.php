@@ -13,7 +13,7 @@ if (empty($mdDados['mtxSistema']) || empty($mdDados['mtxFormulario'])) {
 } else {
     try {
         $mdConexao = conexao();
-        $mdComando = "INSERT INTO gear_menus(sistema, formulario, modulo, descricao, href, target, ordem, cadastro) VALUES ('".
+        $mdComando = "INSERT INTO planta_menus(sistema, formulario, modulo, descricao, href, target, ordem, cadastro) VALUES ('".
                         $mdDados['mtxSistema']."','".$mdDados['mtxFormulario']."','".$mdDados['mtxModulo']."','".
                         $mdDados['mtxDescricao']."','','',0, UTC_TIMESTAMP())";
         $mdSql = $mdConexao->prepare($mdComando); 

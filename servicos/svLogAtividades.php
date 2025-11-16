@@ -9,9 +9,9 @@ $_page = carregarGets('page', 1);
 $_paginacao = carregarGets('paginacao', 'NAO'); 
 $_limite = carregarGets('limite', $_SESSION['plantaRegPorPagina']);  
 
-// Recuperando as informações do Aeroporto
-$utcAeroporto = $_SESSION['plantaUTCAeroporto'];
-$siglaAeroporto = $_SESSION['plantaAeroporto'];
+// Recuperando as informações do Site
+$utcSite = $_SESSION['plantaUTCSite'];
+$siglaSite = $_SESSION['plantaSite'];
 
 // Recebendo eventos e parametros para executar os procedimentos
 $evento = carregarGets('evento',carregarPosts('evento'));
@@ -23,16 +23,16 @@ $dataInicio = carregarPosts("dataInicio");
 $dataFinal = carregarPosts("dataFinal");
 $tabela = carregarPosts("tabela");
 $operacao = carregarPosts("operacao");
-$aeroporto = carregarPosts("aeroporto");
+$site = carregarPosts("site");
 $usuario = carregarPosts("usuario");
 $registro = carregarPosts("registro");
 $comando = carregarPosts("comando");
 $observacao = carregarPosts("observacao");
 
 // Adicionais 
-$filtro = carregarCookie($siglaAeroporto.'_svPL_filtro','');
-$descricao = carregarCookie($siglaAeroporto.'_svPL_descricao','');
-$ordenacao = carregarCookie($siglaAeroporto.'_svPL_ordenacao','lg.cadastro desc');
+$filtro = carregarCookie($siglaSite.'_svPL_filtro','');
+$descricao = carregarCookie($siglaSite.'_svPL_descricao','');
+$ordenacao = carregarCookie($siglaSite.'_svPL_ordenacao','lg.cadastro desc');
 
 // Ponto para exibição do formulário
 formulario:
@@ -52,8 +52,8 @@ $titulo = "Log de Atividades";
 	    	<div class="form-group">
                 <!-- Campos hidden -->
                 <!--***************************************************************** -->
-                <input type="hidden" id="hdSiglaAeroporto" <?="value=\"{$siglaAeroporto}\"";?>/>
-                <input type="hidden" class="cpoLimpar" id="hdAeroporto" <?="value=\"{$aeroporto}\"";?>/>
+                <input type="hidden" id="hdSiglaSite" <?="value=\"{$siglaSite}\"";?>/>
+                <input type="hidden" class="cpoLimpar" id="hdSite" <?="value=\"{$site}\"";?>/>
                 <input type="hidden" class="cpoLimpar" id="hdUsuario" <?="value=\"{$usuario}\"";?>/>
                 <input type="hidden" class="cpoLimpar" id="hdTabela" <?="value=\"{$tabela}\"";?>/>
                 <input type="hidden" class="cpoLimpar" id="hdOperacao" <?="value=\"{$operacao}\"";?>/>
@@ -87,8 +87,8 @@ $titulo = "Log de Atividades";
                                 </select>
                             </div>
                             <div class="col-md-3">
-                                <label for="slAeroporto">Aeroporto</label>
-                                <select class="form-select cpoCookie selLimpar input-lg" id="slAeroporto" name="aeroporto">
+                                <label for="slSite">Site</label>
+                                <select class="form-select cpoCookie selLimpar input-lg" id="slSite" name="site">
                                 </select>
                             </div>
                             <div class="col-md-3">
@@ -118,7 +118,7 @@ $titulo = "Log de Atividades";
                                 <select class="form-select cpoCookie selLimpar input-lg" id="slOrdenacao" name="ordenacao">
                                     <option <?php echo ($ordenacao == 'lg.cadastro desc') ? 'selected' : '';?> value='lg.cadastro desc'>Data</option>
                                     <option <?php echo ($ordenacao == 'lg.tabela, lg.cadastro desc') ? 'selected' : '';?> value='lg.tabela, lg.cadastro desc'>Tabela</option>
-                                    <option <?php echo ($ordenacao == 'lg.aeroporto, lg.cadastro desc') ? 'selected' : '';?> value='lg.aeroporto, lg.cadastro desc'>Aeroporto</option>
+                                    <option <?php echo ($ordenacao == 'lg.site, lg.cadastro desc') ? 'selected' : '';?> value='lg.site, lg.cadastro desc'>Site</option>
                                     <option <?php echo ($ordenacao == 'lg.usuario, lg.cadastro desc') ? 'selected' : '';?> value='lg.usuario, lg.cadastro desc'>Usuário</option>
                                 </select> 
                             </div>
@@ -174,9 +174,9 @@ $titulo = "Log de Atividades";
                             filtro += " AND lg.operacao = '"+$("#slOperacao").val()+"'";
                             descricaoFiltro += ' <br>Operação : '+$("#slOperacao :selected").text();
                         break;
-                        case "slAeroporto":
-                            filtro += " AND lg.aeroporto = '"+$("#slAeroporto :selected").text().split(' - ')[0]+"'";
-                            descricaoFiltro += ' <br>Aeroporto : '+$("#slAeroporto :selected").text();
+                        case "slSite":
+                            filtro += " AND lg.site = '"+$("#slSite :selected").text().split(' - ')[0]+"'";
+                            descricaoFiltro += ' <br>Site : '+$("#slSite :selected").text();
                         break;
                         case "slUsuario":
                             filtro += " AND lg.usuario = '"+$("#slUsuario :selected").text().split(' - ')[0]+"'";
@@ -204,9 +204,9 @@ $titulo = "Log de Atividades";
             // Montagem da ordem
             var ordem = $("#slOrdenacao").val();
             
-            await criarCookie($('#hdSiglaAeroporto').val()+'_svPL_ordenacao', ordem);
-            await criarCookie($('#hdSiglaAeroporto').val()+'_svPL_filtro', filtro);
-            await criarCookie($('#hdSiglaAeroporto').val()+'_svPL_descricao', descricaoFiltro);
+            await criarCookie($('#hdSiglaSite').val()+'_svPL_ordenacao', ordem);
+            await criarCookie($('#hdSiglaSite').val()+'_svPL_filtro', filtro);
+            await criarCookie($('#hdSiglaSite').val()+'_svPL_descricao', descricaoFiltro);
 
             await svCarregarLogsAtividades('Consultar', filtro, ordem, descricaoFiltro, parseInt($('#hdPagina').val()), parseInt($('#hdLimite').val()));
             $("#dtDataInicio").focus();
@@ -214,7 +214,7 @@ $titulo = "Log de Atividades";
 
         $("#exportarPDF").click(function(){
             var form = "<form id='relatorio' action='../suporte/suRelatorio.php' method='post' >";
-            form += '<input type="hidden" name="arquivo" value="'+$("#hdSiglaAeroporto").val()+'">';
+            form += '<input type="hidden" name="arquivo" value="'+$("#hdSiglaSite").val()+'">';
             form += '<input type="hidden" name="titulo" value="' + $('#divTitulo').text() + ($('#divPagina').text() != "Paginação" ? " [incompleto]" : "") + '">';
             form += '<input type="hidden" name="relatorio" value="' + $('#divImpressao').html().replace(/\"/g,'\'') + '">';
             form += '<input type="hidden" name="download" value="1">';
@@ -226,9 +226,9 @@ $titulo = "Log de Atividades";
         });
 
         // Adequações para a pesquisa
-        var pesquisaOrdem = await valorCookie($('#hdSiglaAeroporto').val()+'_svPL_ordenacao');
-        var pesquisaFiltro = " " + await valorCookie($('#hdSiglaAeroporto').val()+'_svPL_filtro');
-        var pesquisaDescricao = await valorCookie($('#hdSiglaAeroporto').val()+'_svPL_descricao');
+        var pesquisaOrdem = await valorCookie($('#hdSiglaSite').val()+'_svPL_ordenacao');
+        var pesquisaFiltro = " " + await valorCookie($('#hdSiglaSite').val()+'_svPL_filtro');
+        var pesquisaDescricao = await valorCookie($('#hdSiglaSite').val()+'_svPL_descricao');
 
         // Adequações para o formulario  
         if (isEmpty(pesquisaFiltro)) {
@@ -236,15 +236,15 @@ $titulo = "Log de Atividades";
             pesquisaFiltro = "";
             pesquisaDescricao = "";
 
-            await criarCookie($('#hdSiglaAeroporto').val()+'_svPL_ordenacao', pesquisaOrdem);
-            await criarCookie($('#hdSiglaAeroporto').val()+'_svPL_filtro', pesquisaFiltro);
-            await criarCookie($('#hdSiglaAeroporto').val()+'_svPL_descricao', pesquisaDescricao);
+            await criarCookie($('#hdSiglaSite').val()+'_svPL_ordenacao', pesquisaOrdem);
+            await criarCookie($('#hdSiglaSite').val()+'_svPL_filtro', pesquisaFiltro);
+            await criarCookie($('#hdSiglaSite').val()+'_svPL_descricao', pesquisaDescricao);
         }  
 
         await suCarregarSelectTodas('LogsOperacao','#slOperacao', $('#hdOperacao').val(),'','Consultar');
         await suCarregarSelectTodos('LogsTabela','#slTabela', $('#hdTabela').val(),'','Consultar');
         await suCarregarSelectTodos('Usuarios','#slUsuario', $('#hdUsuario').val(),'','Consultar');
-        await suCarregarSelectTodos('AeroportosClientes','#slAeroporto',$('#hdAeroporto').val(),'','Consultar');
+        await suCarregarSelectTodos('SitesClientes','#slSite',$('#hdSite').val(),'','Consultar');
 
         await svCarregarLogsAtividades('Consultar', pesquisaFiltro, pesquisaOrdem, pesquisaDescricao, parseInt($('#hdPagina').val()), parseInt($('#hdLimite').val()));
         $("#dtDataInicio").focus();

@@ -7,7 +7,7 @@ verificarExecucao();
 
 // Recuperando as informações do Sistema e remetente
 $sistema = $_SESSION['plantaSistema'];
-$aeroporto = $_SESSION['plantaAeroporto'];
+$aeroporto = $_SESSION['plantaSite'];
 $usuario = $_SESSION['plantaUsuario'];
 $email = $_SESSION['plantaEMail'];
 
@@ -53,7 +53,7 @@ $titulo = "Enviar contato";
 			 	<div class="row">  
                     <div id="formularioCadastro" class = "col-lg-12 collapse <?="{$collapse}" ?>">				
 						<label>Aeroporto</label>
-						<h4><?php echo $_SESSION['plantaAeroporto'].' - '.$_SESSION['plantaLocalidadeAeroporto'] ?></h4>
+						<h4><?php echo $_SESSION['plantaSite'].' - '.$_SESSION['plantaLocalidadeSite']  ?></h4>
 						<label>Usuário</label>
 						<h4><?php echo $_SESSION['plantaUsuario'].' - '.$_SESSION['plantaNome'] ?></h4>
 						<label>Email</label>

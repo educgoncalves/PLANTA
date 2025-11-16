@@ -109,17 +109,17 @@ require_once("../suporte/suConexao.php");
         try {
             $conexao = conexao();
             if ($id != "") {
-                $comando = "UPDATE gear_aeroportos SET iata = '".$iata."', icao = '".$icao."', nome = '".$nome."', localidade = '".$localidade."', pais = '".
+                $comando = "UPDATE planta_aeroportos SET iata = '".$iata."', icao = '".$icao."', nome = '".$nome."', localidade = '".$localidade."', pais = '".
                             $pais."', situacao = '".$situacao."', fonte = '".$siglaAeroporto."', origem = 'MNL', cadastro = UTC_TIMESTAMP() WHERE id = ".$id;
             } else {
-                $comando = "INSERT INTO gear_aeroportos (iata, icao, nome, localidade, pais, situacao, origem, fonte, cadastro) VALUES ('".
+                $comando = "INSERT INTO planta_aeroportos (iata, icao, nome, localidade, pais, situacao, origem, fonte, cadastro) VALUES ('".
                             $iata."', '".$icao."', '".$nome."', '".$localidade."', '".$pais."', '".$situacao."', 'MNL', '".
                             $siglaAeroporto."', UTC_TIMESTAMP())";
             }
             $sql = $conexao->prepare($comando); 
             if ($sql->execute()) {
                 if ($sql->rowCount() > 0) {
-                    gravaDLogAPI("gear_aeroportos", ($id != "" ? "Alteração" : "Inclusão"), $siglaAeroporto, $usuario, 
+                    gravaDLogAPI("planta_aeroportos", ($id != "" ? "Alteração" : "Inclusão"), $siglaAeroporto, $usuario, 
                                 ($id != "" ? $id  : $conexao->lastInsertId()), $comando);       
                     $_retorno = ['status' => 'OK', 'msg'=> "Registro ".($id != "" ? "alterado" : "incluído")." com sucesso!"];
                 } else {
@@ -141,10 +141,10 @@ require_once("../suporte/suConexao.php");
     if ($_funcao == "Excluir") {
         try {
             $conexao = conexao();
-            $comando = "DELETE FROM gear_aeroportos WHERE id = ".$id;
+            $comando = "DELETE FROM planta_aeroportos WHERE id = ".$id;
             $sql = $conexao->prepare($comando); 
             if ($sql->execute()){
-                gravaDLogAPI("gear_aeroportos", "Exclusão", $siglaAeroporto, $usuario, $id, $comando);   
+                gravaDLogAPI("planta_aeroportos", "Exclusão", $siglaAeroporto, $usuario, $id, $comando);   
                 $_retorno = ['status' => 'OK', 'msg'=> "Registro excluído com sucesso!"];
             } else {
                 throw new PDOException("Não foi possível excluir este registro!");

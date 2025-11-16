@@ -1,5 +1,5 @@
 <?php 
-function montagemMenu($_sistema,$_aeroporto,$_grupo,$_usuario) {
+function montagemMenu($_sistema,$_site,$_grupo,$_usuario) {
     // Verifica se existe notificação não lida para o usuário
     $_token = gerarToken($_sistema);
     $_dados = ['tabela'=>'Notificacoes',
@@ -18,7 +18,7 @@ function montagemMenu($_sistema,$_aeroporto,$_grupo,$_usuario) {
     $_atalhos = array();
     $_graficos = array();
     $_informacoes = array();
-    $_dados = ['sistema'=>$_sistema,'aeroporto'=>$_aeroporto,'grupo'=>$_grupo];
+    $_dados = ['sistema'=>$_sistema,'site'=>$_site,'grupo'=>$_grupo];
     $_post = ['token'=>$_token,'funcao'=>'MontarMenu','dados'=>$_dados];
     $_retorno = executaAPIs('apiMenu.php', $_post);
     if ($_retorno['status'] == 'OK') {
@@ -48,7 +48,7 @@ function montagemMenu($_sistema,$_aeroporto,$_grupo,$_usuario) {
     echo '  <div class="d-flex justify-content-start">', "\n";
     echo '      <button class="btn menu" type="button"><span class="navbar-toggler-icon"></span></button>', "\n";
     echo '      <a class="navbar-brand" href="../menu/menu.php">', "\n";
-    echo '        <img class="d-inline-block align-text-top rounded-pill" src="../ativos/img/logo_medio.png" alt="logo"></a>', "\n";
+    echo '        <img class="d-inline-block align-text-top rounded-pill" src="../ativos/img/logo_encode_medio.png" alt="logo"></a>', "\n";
     echo '  </div>';
     echo '  <!-- Aguardando processamento -->', "\n";
     echo '  <div class="carregando justify-content-center">', "\n";
@@ -58,9 +58,9 @@ function montagemMenu($_sistema,$_aeroporto,$_grupo,$_usuario) {
     echo '  <div class="d-flex justify-content-end">', "\n";
     echo '      <button class="btn btn-outline-primary" type="button" title="Usuário">'.$_SESSION['plantaGrupo'].' - '.$_SESSION['plantaUsuario'].'</button>', "\n";
     if ($_SESSION['plantaGrupo'] == 'ADM') {
-        echo '      <a href="?evento=modalAeroporto" class="btn btn-outline-danger" role="button" title="Aeroportos disponíveis">'.$_SESSION['plantaSistema'].' - '.$_SESSION['plantaAeroporto'].'</a>', "\n";
+        echo '      <a href="?evento=modalAeroporto" class="btn btn-outline-danger" role="button" title="Aeroportos disponíveis">'.$_SESSION['plantaSistema'].' - '.$_SESSION['plantaSite'].'</a>', "\n";
     } else {
-        echo '      <a href="../suporte/suLogout.php" class="btn btn-outline-danger" role="button" title="Novo login">'.$_SESSION['plantaSistema'].' - '.$_SESSION['plantaAeroporto'].'</a>', "\n";
+        echo '      <a href="../suporte/suLogout.php" class="btn btn-outline-danger" role="button" title="Novo login">'.$_SESSION['plantaSistema'].' - '.$_SESSION['plantaSite'].'</a>', "\n";
     }
     echo '      <button class="btn btn-outline-warning" type="button" data-bs-toggle="modal" data-bs-target="#sobre" title="Sobre o software">Sobre</button>', "\n";
     // Montando o botao de notificacoes
@@ -145,7 +145,7 @@ function montagemMenu($_sistema,$_aeroporto,$_grupo,$_usuario) {
                     $_dados['descricao'].'</a></li>', "\n"; 
                     
                 // Personaliza formulário com a sigla ICAO do Aeroporto
-                $_href = str_replace("GEAR", $_SESSION['plantaAeroporto'], $_dados['href']);
+                $_href = str_replace("GEAR", $_SESSION['plantaSite'], $_dados['href']);
                 echo '<form id="F'.$_dados['formulario'].'" action="'.$_href.'" method="POST"'.
                     ($_dados['target'] != '' ? ' target="'.$_dados['target'].'"' : '').'>'.
                     '<input type="submit" style="display: none;"></form>';
@@ -153,7 +153,7 @@ function montagemMenu($_sistema,$_aeroporto,$_grupo,$_usuario) {
 
             case 'MenuOpcao':
                 // Personaliza formulário com a sigla ICAO do Aeroporto
-                $_href = str_replace("GEAR", $_SESSION['plantaAeroporto'], $_dados['href']);
+                $_href = str_replace("GEAR", $_SESSION['plantaSite'], $_dados['href']);
                 echo '  <li><a class="sidebar-item" href="'.$_href.'"'.
                     ($_dados['target'] != '' ? ' target="'.$_dados['target'].'"' : '').'>'.
                     ($_dados['iconeSVG'] != "" ? '<svg class="iconsvg"><use href="#apl_'.$_dados['iconeSVG'].'"></use></svg>' : '').
@@ -162,7 +162,7 @@ function montagemMenu($_sistema,$_aeroporto,$_grupo,$_usuario) {
 
             case 'SubMenuOpcao':
                 // Personaliza formulário com a sigla ICAO do Aeroporto
-                $_href = str_replace("GEAR", $_SESSION['plantaAeroporto'], $_dados['href']);
+                $_href = str_replace("GEAR", $_SESSION['plantaSite'], $_dados['href']);
                 echo '  <li><a class="sidebar-item-2" href="'.$_href.'"'.
                     ($_dados['target'] != '' ? ' target="'.$_dados['target'].'"' : '').'>'.
                     ($_dados['iconeSVG'] != "" ? '<svg class="iconsvg"><use href="#apl_'.$_dados['iconeSVG'].'"></use></svg>' : '').
@@ -221,7 +221,7 @@ function montaAtalhos($__atalhos) {
     echo '          <div class="mt-3 text-center"><span><h3>Acesso rápido</h3></span></div>';
     echo '          <div class="row row-cols-auto justify-content-md-center">', "\n";
     foreach ($__atalhos as $_dados) {
-        $_href = str_replace("GEAR", $_SESSION['plantaAeroporto'], $_dados['href']);
+        $_href = str_replace("GEAR", $_SESSION['plantaSite'], $_dados['href']);
         echo '<div class="col">', "\n";
         echo '  <a href="'.$_href.'" '.($_dados['target'] != "" ? 'target="'.$_dados['target'].'"' : "").'">', "\n";
         echo '      <div class="card text-primary mb-1" style="min-width: 15rem;">', "\n";
@@ -268,7 +268,7 @@ function montaGraficos($__atalhos) {
     echo '          <div class="mt-3 text-center"><span><h3>Gráficos</h3></span></div>', "\n";
     echo '          <div class="row row-cols-auto justify-content-md-center">', "\n";
     foreach ($__atalhos as $_dados) {
-        $_href = str_replace("GEAR", $_SESSION['plantaAeroporto'], $_dados['href']);
+        $_href = str_replace("GEAR", $_SESSION['plantaSite'], $_dados['href']);
         echo '<div class="col">', "\n";
         echo '  <a href="'.$_href.'" '.($_dados['target'] != "" ? 'target="'.$_dados['target'].'"' : "").'">', "\n";
         echo '  <div class="card p-2 mb-1" style="min-width: 15rem;">', "\n";
@@ -289,7 +289,7 @@ function montaInformacoes($__atalhos) {
     echo '          <div class="mt-3 text-center"><span>Informações</span></div>', "\n";
     echo '          <div class="row row-cols-auto justify-content-md-center">', "\n";
     foreach ($__atalhos as $_dados) {
-        $_href = str_replace("GEAR", $_SESSION['plantaAeroporto'], $_dados['href']);
+        $_href = str_replace("GEAR", $_SESSION['plantaSite'], $_dados['href']);
         echo '<div class="col">', "\n";
         echo '  <a href="'.$_href.'" '.($_dados['target'] != "" ? 'target="'.$_dados['target'].'"' : "").'">', "\n";
         echo '  <div class="card p-2 mb-1" style="min-width: 15rem;">', "\n";

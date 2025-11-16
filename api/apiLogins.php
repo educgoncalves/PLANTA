@@ -94,14 +94,14 @@ require_once("../suporte/suEnviarEmail.php");
             break;
 
             case 'Completo':
-                $_chaves = array('senha','aeroporto','sistema','identificacao');
+                $_chaves = array('senha','site','sistema','identificacao');
                 foreach($_chaves as $_chave){
                     if (!array_key_exists($_chave, $_dados)) {
                         throw new PDOException("API ".$_api." 003 - [".$_funcao."] - Falta parâmetro [".$_chave."] obrigatório para executar!");
                     }
                 }
                 $_senha = $_dados['senha'];
-                $_aeroporto = $_dados['aeroporto'];
+                $_site = $_dados['site'];
                 $_sistema = $_dados['sistema'];
                 $_identificacao = $_dados['identificacao'];
             break;
@@ -117,39 +117,39 @@ require_once("../suporte/suEnviarEmail.php");
             break;
 
             case 'AtivarConexao':
-                $_chaves = array('aeroporto','sistema','grupo','identificacao');
+                $_chaves = array('site','sistema','grupo','identificacao');
                 foreach($_chaves as $_chave){
                     if (!array_key_exists($_chave, $_dados)) {
                         throw new PDOException("API ".$_api." 003 - [".$_funcao."] - Falta parâmetro [".$_chave."] obrigatório para executar!");
                     }
                 }
-                $_aeroporto = $_dados['aeroporto'];
+                $_site = $_dados['site'];
                 $_sistema = $_dados['sistema'];
                 $_grupo = $_dados['grupo'];
                 $_identificacao = $_dados['identificacao'];
             break;
 
             case 'DesativarConexao':
-                $_chaves = array('aeroporto','sistema','identificacao');
+                $_chaves = array('site','sistema','identificacao');
                 foreach($_chaves as $_chave){
                     if (!array_key_exists($_chave, $_dados)) {
                         throw new PDOException("API ".$_api." 003 - [".$_funcao."] - Falta parâmetro [".$_chave."] obrigatório para executar!");
                     }
                 }
-                $_aeroporto = $_dados['aeroporto'];
+                $_site = $_dados['site'];
                 $_sistema = $_dados['sistema'];
                 $_identificacao = $_dados['identificacao'];
             break;
 
             case 'VerificarConexao':
             case 'VerificarConexaoAtiva':                
-                $_chaves = array('aeroporto','sistema','identificacao');
+                $_chaves = array('site','sistema','identificacao');
                 foreach($_chaves as $_chave){
                     if (!array_key_exists($_chave, $_dados)) {
                         throw new PDOException("API ".$_api." 003 - [".$_funcao."] - Falta parâmetro [".$_chave."] obrigatório para executar!");
                     }
                 }
-                $_aeroporto = $_dados['aeroporto'];
+                $_site = $_dados['site'];
                 $_sistema = $_dados['sistema'];
                 $_identificacao = $_dados['identificacao'];
             break;
@@ -181,10 +181,10 @@ require_once("../suporte/suEnviarEmail.php");
     if ($_funcao == 'UsuarioSenha' || $_funcao == 'UsuarioSistema') {
         try {    
             $_conexao = conexao();
-            $_comando = "SELECT us.id, us.usuario, ac.idAeroporto, ac.sistema, us.senha,
-                            (SELECT IFNULL(COUNT(*),0) FROM gear_acessos qt WHERE qt.idUsuario = us.id) as qtdAcessos
-                            FROM gear_usuarios us
-                            INNER JOIN gear_acessos ac ON ac.idUsuario = us.id ".
+            $_comando = "SELECT us.id, us.usuario, ac.idSite, ac.sistema, us.senha,
+                            (SELECT IFNULL(COUNT(*),0) FROM planta_acessos qt WHERE qt.idUsuario = us.id) as qtdAcessos
+                            FROM planta_usuarios us
+                            INNER JOIN planta_acessos ac ON ac.idUsuario = us.id ".
                             (!empty($_sistema) ? " AND ac.sistema = '".$_sistema."' " : " ").
                             "WHERE ".(!empty($_usuario) ? " us.usuario = '".$_usuario.
                                 "' AND " : "")." us.senha = sha1('".$_senha."') AND us.situacao = 'ATV' LIMIT 1";
@@ -211,20 +211,20 @@ require_once("../suporte/suEnviarEmail.php");
     if ($_funcao == 'Completo') {
         try {    
             $_conexao = conexao();
-            $_comando = "SELECT us.id, us.usuario, us.nome, us.email, ac.grupo, dm.descricao as nivel, ae.icao as aeroporto,
-                            ac.idAeroporto, ae.localidade, cl.utc, cl.tmpTaxiG1, cl.tmpTaxiG2, cl.tmpRefreshPagina, cl.tmpRefreshTela,
-                            ae.nome as nomeAeroporto, IFNULL(cl.regPorPagina, 10) as regPorPagina, ac.sistema, 
+            $_comando = "SELECT us.id, us.usuario, us.nome, us.email, ac.grupo, dm.descricao as nivel, st.site,
+                            ac.idSite, st.localidade, cl.utc, cl.tmpRefreshPagina, cl.tmpRefreshTela,
+                            st.nome as nomeSite, IFNULL(cl.regPorPagina, 10) as regPorPagina, ac.sistema, 
                             IFNULL(cl.debug, 'SIM') as debug, cl.conexoes as conexoesPermitidas,
                             (SELECT COUNT(*) 
-                                FROM gear_conexoes cn 
-                                WHERE cn.idAeroporto = ac.idAeroporto AND cn.sistema = ac.sistema AND cn.grupo <> 'ADM' 
+                                FROM planta_conexoes cn 
+                                WHERE cn.idSite = ac.idSite AND cn.sistema = ac.sistema AND cn.grupo <> 'ADM' 
                                 AND cn.identificacao <> '".$_identificacao."' AND cn.situacao = 'ATV') as conexoesAtivas
-                        FROM gear_usuarios us
-                        INNER JOIN gear_acessos ac ON ac.idUsuario = us.id AND ac.idAeroporto = ".$_aeroporto.
+                        FROM planta_usuarios us
+                        INNER JOIN planta_acessos ac ON ac.idUsuario = us.id AND ac.idSite = ".$_site.
                             " AND ac.sistema = '".$_sistema."' 
-                        LEFT JOIN gear_clientes cl ON cl.idAeroporto = ac.idAeroporto AND cl.sistema = ac.sistema
-                        LEFT JOIN gear_aeroportos ae ON ae.id = ac.idAeroporto 
-                        LEFT JOIN gear_dominios dm ON tabela = 'planta_acessos' and coluna = 'nivel' and codigo = ac.grupo 
+                        LEFT JOIN planta_clientes cl ON cl.idSite = ac.idSite AND cl.sistema = ac.sistema
+                        LEFT JOIN planta_sites st ON st.id = ac.idSite 
+                        LEFT JOIN planta_dominios dm ON tabela = 'planta_acessos' and coluna = 'nivel' and codigo = ac.grupo 
                         WHERE us.usuario = '".$_usuario."'".
                             ($_senha != "" ? " AND us.senha = sha1('".$_senha."')" : "").
                             " AND us.situacao = 'ATV' LIMIT 1";
@@ -252,7 +252,7 @@ require_once("../suporte/suEnviarEmail.php");
         try {    
             $_conexao = conexao();
             $_comando = "SELECT us.id, us.usuario
-                            FROM gear_usuarios us
+                            FROM planta_usuarios us
                             WHERE ".((!empty($_usuario) && $_usuario != '__GEAR__') ? " us.usuario = '".$_usuario."' AND " : "").
                                     " us.email = '".$_email."' AND us.situacao = 'ATV' LIMIT 1";
             $_sql = $_conexao->prepare($_comando);
@@ -277,7 +277,7 @@ require_once("../suporte/suEnviarEmail.php");
 // FUNÇÃO: Ativar conexão
 // ********************************************************************
     if ($_funcao == 'AtivarConexao') {
-        $_retorno = ativarConexao($_aeroporto, $_sistema, $_usuario, $_grupo, $_identificacao);
+        $_retorno = ativarConexao($_site, $_sistema, $_usuario, $_grupo, $_identificacao);
     }
 // ********************************************************************
 
@@ -285,7 +285,7 @@ require_once("../suporte/suEnviarEmail.php");
 // FUNÇÃO: Desativar conexão
 // ********************************************************************
     if ($_funcao == 'DesativarConexao') {
-        $_retorno = desativarConexao($_aeroporto, $_sistema, $_usuario, $_identificacao);
+        $_retorno = desativarConexao($_site, $_sistema, $_usuario, $_identificacao);
     } 
 // ********************************************************************
 
@@ -297,12 +297,12 @@ require_once("../suporte/suEnviarEmail.php");
             $_conexao = conexao();
             $_comando = "SELECT ac.grupo, cl.conexoes as conexoesPermitidas,
                             (SELECT COUNT(*) 
-                            FROM gear_conexoes cn 
-                            WHERE cn.idAeroporto = cl.idAeroporto AND cn.sistema = ac.sistema AND cn.grupo <> 'ADM' 
+                            FROM planta_conexoes cn 
+                            WHERE cn.idSite = cl.idSite AND cn.sistema = ac.sistema AND cn.grupo <> 'ADM' 
                                 AND cn.identificacao <> '".$_identificacao."' AND cn.situacao = 'ATV') as conexoesAtivas
-                        FROM gear_usuarios us
-                        INNER JOIN gear_acessos ac ON ac.idUsuario = us.id AND ac.idAeroporto = ".$_aeroporto." AND ac.sistema = '".$_sistema."' 
-                        LEFT JOIN gear_clientes cl ON cl.idAeroporto = ac.idAeroporto AND cl.sistema = ac.sistema
+                        FROM planta_usuarios us
+                        INNER JOIN planta_acessos ac ON ac.idUsuario = us.id AND ac.idSite = ".$_site." AND ac.sistema = '".$_sistema."' 
+                        LEFT JOIN planta_clientes cl ON cl.idSite = ac.idSite AND cl.sistema = ac.sistema
                         WHERE us.usuario = '".$_usuario."' AND us.situacao = 'ATV' LIMIT 1";
             $_sql = $_conexao->prepare($_comando);
             if ($_sql->execute()) {
@@ -333,8 +333,8 @@ require_once("../suporte/suEnviarEmail.php");
         try {    
             $_conexao = conexao();
             $_comando = "SELECT cn.id
-                    FROM gear_conexoes cn 
-                    WHERE cn.idAeroporto = ".$_aeroporto." AND cn.sistema = '".$_sistema."' AND cn.identificacao = '".
+                    FROM planta_conexoes cn 
+                    WHERE cn.idSite = ".$_site." AND cn.sistema = '".$_sistema."' AND cn.identificacao = '".
                         $_identificacao."' AND cn.usuario =  '".$_usuario."' AND cn.situacao = 'ATV' LIMIT 1";
             $_sql = $_conexao->prepare($_comando);
             if ($_sql->execute()) {

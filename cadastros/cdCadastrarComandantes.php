@@ -14,8 +14,8 @@ $token = gerarToken($_SESSION['plantaSistema']);
 
 // Recuperando as informações do Aeroporto
 $usuario = $_SESSION['plantaUsuario'];
-$utcAeroporto = $_SESSION['plantaUTCAeroporto'];
-$siglaAeroporto = $_SESSION['plantaAeroporto'];
+$utcAeroporto = $_SESSION['plantaUTCSite'];
+$siglaAeroporto = $_SESSION['plantaSite'];
 
 // Recebendo eventos e parametros para executar os procedimentos
 $evento = carregarGets('evento',carregarPosts('evento'));

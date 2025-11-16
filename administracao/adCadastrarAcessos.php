@@ -10,8 +10,8 @@ $_paginacao = carregarGets('paginacao', 'NAO');
 $_limite = carregarGets('limite', $_SESSION['plantaRegPorPagina']);  
 
 // Recuperando as informações do Aeroporto
-$utcAeroporto = $_SESSION['plantaUTCAeroporto'];
-$siglaAeroporto = $_SESSION['plantaAeroporto'];
+$utcAeroporto = $_SESSION['plantaUTCSite'];
+$siglaAeroporto = $_SESSION['plantaSite'];
 
 // Recebendo eventos e parametros para executar os procedimentos
 $evento = carregarGets('evento',carregarPosts('evento'));
@@ -23,7 +23,7 @@ $limparCampos = false;
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $id = carregarPosts('id'); 
     $usuario = carregarPosts('usuario');
-    $aeroporto = carregarPosts('aeroporto');
+    $aeroporto = carregarPosts('site');
     $sistema = carregarPosts('sistema');
     $grupo = carregarPosts('grupo');
     $preferencial = carregarPosts('preferencial');
@@ -39,21 +39,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 // Salvando as informações
 if ($evento == "salvar") {
     // Verifica se campos estão preenchidos
-    $erros = camposPreenchidos(['usuario','aeroporto','grupo']); //,'preferencial']);
+    $erros = camposPreenchidos(['usuario','site','grupo']); //,'preferencial']);
     if (!$erros) {
         try {
             $conexao = conexao();
             if ($id != "") {
-                $comando = "UPDATE gear_acessos SET idUsuario = ".$usuario.", idAeroporto = ".$aeroporto.", sistema = '".$sistema."', grupo = '".$grupo.
+                $comando = "UPDATE planta_acessos SET idUsuario = ".$usuario.", idSite = ".$aeroporto.", sistema = '".$sistema."', grupo = '".$grupo.
                             "', preferencial = '".$preferencial."', cadastro = UTC_TIMESTAMP() WHERE id = ".$id;
             } else {
-                $comando = "INSERT INTO gear_acessos (idUsuario, idAeroporto, sistema, grupo, preferencial, cadastro) VALUES (".
+                $comando = "INSERT INTO planta_acessos (idUsuario, idSite, sistema, grupo, preferencial, cadastro) VALUES (".
                             $usuario.", ".$aeroporto.", '".$sistema."', '".$grupo."', '".$preferencial."', UTC_TIMESTAMP())";
             }
             $sql = $conexao->prepare($comando);               
             if ($sql->execute()) {
                 if ($sql->rowCount() > 0) {
-                    gravaDLog("gear_acessos", ($id != "" ? "Alteração" : "Inclusão"), $_SESSION['plantaAeroporto'], 
+                    gravaDLog("planta_acessos", ($id != "" ? "Alteração" : "Inclusão"), $_SESSION['plantaSite'], 
                                 $_SESSION['plantaUsuario'], ($id != "" ? $id  : $conexao->lastInsertId()), $comando);
                     montarMensagem("success",array("Registro ".($id != "" ? "alterado" : "incluído")." com sucesso!"));
                     $id = null;
@@ -76,13 +76,13 @@ if ($evento == "salvar") {
 if ($evento == "recuperar" && $id != "") {
     try {
         $conexao = conexao();
-        $comando = "SELECT * FROM gear_acessos WHERE id = ".$id;
+        $comando = "SELECT * FROM planta_acessos WHERE id = ".$id;
         $sql = $conexao->prepare($comando);     
         if ($sql->execute()) {
             $registros = $sql->fetchAll(PDO::FETCH_ASSOC);
             foreach ($registros as $dados) {
                 $usuario = $dados['idUsuario'];
-                $aeroporto = $dados['idAeroporto'];
+                $aeroporto = $dados['idSite'];
                 $sistema = $dados['sistema'];
                 $grupo = $dados['grupo'];
                 $preferencial = $dados['preferencial'];
@@ -100,10 +100,10 @@ if ($evento == "recuperar" && $id != "") {
 if ($evento == "excluir" && $id != "") {
     try {
         $conexao = conexao();
-        $comando = "DELETE FROM gear_acessos WHERE id = ".$id;
+        $comando = "DELETE FROM planta_acessos WHERE id = ".$id;
         $sql = $conexao->prepare($comando); 
         if ($sql->execute()){
-            gravaDLog("gear_acessos", "Exclusão", $_SESSION['plantaAeroporto'], $_SESSION['plantaUsuario'], $id, $comando);            
+            gravaDLog("planta_acessos", "Exclusão", $_SESSION['plantaSite'], $_SESSION['plantaUsuario'], $id, $comando);            
             montarMensagem("success",array("Registro excluído com sucesso!"));
             $id = null;
             $limparCampos = true;
@@ -127,7 +127,7 @@ if ($limparCampos == true) {
 
 // Ponto para exibição do formulário
 formulario:
-$ordenacao = carregarCookie($siglaAeroporto.'_adCA_ordenacao','us.usuario,ae.icao,ac.sistema');            
+$ordenacao = carregarCookie($siglaAeroporto.'_adCA_ordenacao','us.usuario,st.site,ac.sistema');            
 metaTagsBootstrap('');
 $titulo = "Acessos dos Usuários";
 ?>
@@ -259,8 +259,8 @@ $titulo = "Acessos dos Usuários";
                     <div class="col-md-8">
                         <label for="pslOrdenacao">Ordenação da lista</label>
                         <select class="form-select selCookie input-lg" id="pslOrdenacao">
-                            <option <?php echo ($ordenacao == 'us.usuario,ae.iata,ac.sistema') ? 'selected' : '';?> value='us.usuario,ae.icao,ac.sistema'>Usuário</option>
-                            <option <?php echo ($ordenacao == 'ae.iata,us.usuario,ac.sistema') ? 'selected' : '';?> value='ae.icao,us.usuario,ac.sistema'>Aeroporto</option>
+                            <option <?php echo ($ordenacao == 'us.usuario,ae.iata,ac.sistema') ? 'selected' : '';?> value='us.usuario,st.site,ac.sistema'>Usuário</option>
+                            <option <?php echo ($ordenacao == 'ae.iata,us.usuario,ac.sistema') ? 'selected' : '';?> value='st.site,us.usuario,ac.sistema'>Aeroporto</option>
                         </select> 
                     </div>
                 </div>                
@@ -301,7 +301,7 @@ $titulo = "Acessos dos Usuários";
                             descricaoFiltro += " <br>Nome : "+$("#ptxNome").val();
                             break; 
                         case "pslAeroporto":
-                            filtro += " AND ac.idAeroporto = "+$("#pslAeroporto").val();
+                            filtro += " AND ac.idSite = "+$("#pslAeroporto").val();
                             descricaoFiltro += " <br>Aeroporto : "+$("#pslAeroporto :selected").text();
                         break; 
                         case "pslSistema":
@@ -365,7 +365,7 @@ $titulo = "Acessos dos Usuários";
         await suCarregarSelectTodos('AcessosPreferencial','#slPreferencial', $('#hdPreferencial').val(),'','Cadastrar');
         await suCarregarSelectTodos('AcessosGrupos','#slGrupo', $('#hdGrupo').val(),'','Cadastrar');
         await suCarregarSelectTodos('TodosSistema','#slSistema', $('#hdSistema').val(), '','Cadastrar');
-        await suCarregarSelectTodos('AeroportosClientes','#slAeroporto', $('#hdAeroporto').val(), '','Cadastrar');
+        await suCarregarSelectTodos('AeroportosClientes','#slAeroporto', $('#hdSite').val(), '','Cadastrar');
         await suCarregarSelectTodos('Usuarios','#slUsuario', $('#hdUsuario').val(),'','Cadastrar');
         await adCarregarAcessos('Cadastrar', pesquisaFiltro, pesquisaOrdem, pesquisaDescricao, parseInt($('#hdPagina').val()), parseInt($('#hdLimite').val()));
         $("#txUsuario").focus();

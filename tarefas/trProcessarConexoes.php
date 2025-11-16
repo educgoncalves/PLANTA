@@ -3,14 +3,14 @@ require_once("../tarefas/trFuncoes.php");
 require_once("../suporte/suFuncoes.php");
 require_once("../suporte/suConexao.php");
 
-function processarConexoes($identificacao, $idAeroporto = '', $usuario = 'GEAR', $modo = 'AUT') {
+function processarConexoes($identificacao, $idSite = '', $usuario = 'GEAR', $modo = 'AUT') {
     $tarefa = 'PCNX';
 
     $resultado = "trProcessarConexoes_".$identificacao;
     $_mensagens[] = "";
     $_mensagens[] = "Processar Conexões - executado por ".$usuario;
     $_mensagens[] = "";
-    $_mensagens[] = "Parâmentros: ".$idAeroporto.' '.$usuario.' '.$modo;
+    $_mensagens[] = "Parâmentros: ".$idSite.' '.$usuario.' '.$modo;
 
     try {
         // Verifica se pode executar a tarefa
@@ -23,7 +23,7 @@ function processarConexoes($identificacao, $idAeroporto = '', $usuario = 'GEAR',
         // Inativar as conexoes pendentes
         // 
         $conexao = conexao();
-        $filtro = ($idAeroporto != "" ? " AND co.idAeroporto = ".$idAeroporto : "").
+        $filtro = ($idSite != "" ? " AND co.idSite = ".$idSite : "").
                 " AND co.situacao = 'ATV' 
                     AND ((co.grupo <> 'MNT' AND TIMESTAMPDIFF(SECOND, co.entrada, UTC_TIMESTAMP()) > 3600) 
                           OR 
@@ -34,7 +34,7 @@ function processarConexoes($identificacao, $idAeroporto = '', $usuario = 'GEAR',
             // Looping para criar os movimentos sucessores
             $registros = $sql->fetchAll(PDO::FETCH_ASSOC);
             foreach ($registros as $dados) {
-                $comando = "UPDATE gear_conexoes SET saida = UTC_TIMESTAMP(), situacao = 'INA' WHERE id = ".$dados['id'];
+                $comando = "UPDATE planta_conexoes SET saida = UTC_TIMESTAMP(), situacao = 'INA' WHERE id = ".$dados['id'];
                 $sql = $conexao->prepare($comando);  
                 if ($sql->execute()) {
                     gravaDLog('planta_conexoes', 'Alteracao', $dados['icao'], $usuario, $dados['id'], $comando);

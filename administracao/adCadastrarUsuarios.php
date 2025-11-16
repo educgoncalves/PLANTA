@@ -10,8 +10,8 @@ $_paginacao = carregarGets('paginacao', 'NAO');
 $_limite = carregarGets('limite', $_SESSION['plantaRegPorPagina']);  
 
 // Recuperando as informações do Aeroporto
-$utcAeroporto = $_SESSION['plantaUTCAeroporto'];
-$siglaAeroporto = $_SESSION['plantaAeroporto'];
+$utcAeroporto = $_SESSION['plantaUTCSite'];
+$siglaAeroporto = $_SESSION['plantaSite'];
 
 // Recebendo eventos e parametros para executar os procedimentos
 $evento = carregarGets('evento',carregarPosts('evento'));
@@ -44,17 +44,17 @@ if ($evento == "salvar") {
         try {
             $conexao = conexao();
             if ($id != "") {
-                $comando = "UPDATE gear_usuarios SET usuario = '".$usuario."', nome = '".$nome."', email = '".$email."', situacao = '".
+                $comando = "UPDATE planta_usuarios SET usuario = '".$usuario."', nome = '".$nome."', email = '".$email."', situacao = '".
                             $situacao."', celular = '".$celular."', cadastro = UTC_TIMESTAMP() WHERE id = ".$id;
             } else {
-                $comando = "INSERT INTO gear_usuarios (usuario, senha, celular, nome, email, situacao, cadastro) VALUES ('".
+                $comando = "INSERT INTO planta_usuarios (usuario, senha, celular, nome, email, situacao, cadastro) VALUES ('".
                             $usuario."', sha1('". $usuario."'), '".$celular."', '".$nome."', '".$email."', '".
                             $situacao."', UTC_TIMESTAMP())";
             }
             $sql = $conexao->prepare($comando);               
             if ($sql->execute()) {
                 if ($sql->rowCount() > 0) {
-                    gravaDLog("gear_usuarios", ($id != "" ? "Alteração" : "Inclusão"), $_SESSION['plantaAeroporto'], 
+                    gravaDLog("planta_usuarios", ($id != "" ? "Alteração" : "Inclusão"), $_SESSION['plantaSite'], 
                                  $_SESSION['plantaUsuario'], ($id != "" ? $id  : $conexao->lastInsertId()), $comando);
                     montarMensagem("success",array("Registro ".($id != "" ? "alterado" : "incluído")." com sucesso!"));
                     $id = null;
@@ -77,11 +77,11 @@ if ($evento == "salvar") {
 if ($evento == "reset" && $id != "") {
     try {
         $conexao = conexao();
-        $comando = "UPDATE gear_usuarios SET senha = sha1(usuario), cadastro = UTC_TIMESTAMP() WHERE id = ".$id;
+        $comando = "UPDATE planta_usuarios SET senha = sha1(usuario), cadastro = UTC_TIMESTAMP() WHERE id = ".$id;
         $sql = $conexao->prepare($comando);               
         if ($sql->execute()) {
             if ($sql->rowCount() > 0) {
-                gravaDLog("gear_usuarios", "Reset", $_SESSION['plantaAeroporto'], $_SESSION['plantaUsuario'], $id, $comando);            
+                gravaDLog("planta_usuarios", "Reset", $_SESSION['plantaSite'], $_SESSION['plantaUsuario'], $id, $comando);            
                 montarMensagem("success",array("Senha resetada com sucesso!"));
                 $id = null;
                 $limparCampos = true;
@@ -100,7 +100,7 @@ if ($evento == "reset" && $id != "") {
 if ($evento == "recuperar" && $id != "") {
     try {
         $conexao = conexao();
-        $comando = "SELECT * FROM gear_usuarios WHERE id = ".$id;
+        $comando = "SELECT * FROM planta_usuarios WHERE id = ".$id;
         $sql = $conexao->prepare($comando);               
         if ($sql->execute()) {
             $registros = $sql->fetchAll(PDO::FETCH_ASSOC);
@@ -124,10 +124,10 @@ if ($evento == "recuperar" && $id != "") {
 if ($evento == "excluir" && $id != "") {
     try {
         $conexao = conexao();
-        $comando = "DELETE FROM gear_usuarios WHERE id = ".$id;
+        $comando = "DELETE FROM planta_usuarios WHERE id = ".$id;
         $sql = $conexao->prepare($comando);               
         if ($sql->execute()){
-            gravaDLog("gear_usuarios", "Exclusão", $_SESSION['plantaAeroporto'], $_SESSION['plantaUsuario'], $id, $comando);            
+            gravaDLog("planta_usuarios", "Exclusão", $_SESSION['plantaSite'], $_SESSION['plantaUsuario'], $id, $comando);            
             montarMensagem("success",array("Registro excluído com sucesso!"));
             $id = null;
             $limparCampos = true;

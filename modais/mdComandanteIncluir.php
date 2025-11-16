@@ -13,7 +13,7 @@ if (empty($mdDados['mtxCodigoAnac']) || empty($mdDados['mtxNome'])) {
 } else {
     try {
         $mdConexao = conexao();
-        $mdComando = "INSERT INTO gear_comandantes (codigoAnac, nome, telefone, email, situacao, cadastro) VALUES ('".
+        $mdComando = "INSERT INTO planta_comandantes (codigoAnac, nome, telefone, email, situacao, cadastro) VALUES ('".
                         $mdDados['mtxCodigoAnac']."', '".$mdDados['mtxNome']."', '".$mdDados['mtxTelefone']."', '".
                         $mdDados['mtxEmail']."', 'ATV', UTC_TIMESTAMP())";
         $mdSql = $mdConexao->prepare($mdComando); 

@@ -2,8 +2,8 @@
 require_once("../suporte/suConexao.php");
 require_once("../menu/meFuncoes.php");
 verificarExecucao();
-verificarConexao($_SESSION['plantaIDAeroporto'], $_SESSION['plantaSistema'], $_SESSION['plantaUsuario'], $_SESSION['plantaIPCliente']);
-verificarConexaoAtiva($_SESSION['plantaIDAeroporto'], $_SESSION['plantaSistema'], $_SESSION['plantaUsuario'], $_SESSION['plantaIPCliente']);
+verificarConexao($_SESSION['plantaIDSite'], $_SESSION['plantaSistema'], $_SESSION['plantaUsuario'], $_SESSION['plantaIPCliente']);
+verificarConexaoAtiva($_SESSION['plantaIDSite'], $_SESSION['plantaSistema'], $_SESSION['plantaUsuario'], $_SESSION['plantaIPCliente']);
 
 // Modal
 // Ativando a chamada do modal pelo javascript para a troca do aeroporto
@@ -76,7 +76,7 @@ if (carregarGets('evento','') == "modalAeroporto") {
 <!-- *************************************************** -->
 
 <?php 
-    montagemMenu($_SESSION['plantaSistema'],$_SESSION['plantaIDAeroporto'],$_SESSION['plantaGrupo'],$_SESSION['plantaIDUsuario']); 
+    montagemMenu($_SESSION['plantaSistema'],$_SESSION['plantaIDSite'],$_SESSION['plantaGrupo'],$_SESSION['plantaIDUsuario']); 
     exibirMensagem();
 ?>
 
@@ -100,7 +100,7 @@ if (carregarGets('evento','') == "modalAeroporto") {
         var modalAeroporto = "<?php echo $modalAeroporto; ?>";
         var usID = "<?php echo $_SESSION['plantaIDUsuario']; ?>";
         var usSistema = "<?php echo $_SESSION['plantaSistema']; ?>";
-        var usAeroporto = "<?php echo $_SESSION['plantaAeroporto']; ?>";
+        var usAeroporto = "<?php echo $_SESSION['plantaSite']; ?>";
         var modalAeroporto = "<?php echo $modalAeroporto;?>";
         if (modalAeroporto != "") {
             await adCarregarSelectAeroportosAcessados('#mn_slAeroporto', usAeroporto, " AND ac.sistema = '"+usSistema+"' AND ac.idUsuario = "+usID, 'Cadastrar');

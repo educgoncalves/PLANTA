@@ -13,8 +13,8 @@ $_paginacao = carregarGets('paginacao', 'NAO');
 $_limite = carregarGets('limite', $_SESSION['plantaRegPorPagina']);    
 
 // Recuperando as informações do Aeroporto
-$utcAeroporto = $_SESSION['plantaUTCAeroporto'];
-$siglaAeroporto = $_SESSION['plantaAeroporto'];
+$utcAeroporto = $_SESSION['plantaUTCSite'];
+$siglaAeroporto = $_SESSION['plantaSite'];
 
 // Recebendo eventos e parametros para executar os procedimentos
 $evento = carregarGets('evento',carregarPosts('evento'));
@@ -59,18 +59,18 @@ if ($evento == "salvar") {
             $conexao = conexao();
             $matriz = (isNullOrEmpty($matriz) ? 'null' : $matriz);
             if ($id != "") {
-                $comando = "UPDATE gear_operadores SET operador='".$operador."',nome= '".$nome."',iata='".$iata."',icao='".$icao.
+                $comando = "UPDATE planta_operadores SET operador='".$operador."',nome= '".$nome."',iata='".$iata."',icao='".$icao.
                             "',grupo='".$grupo."',cpfCnpj='".$cpfCnpj."',idMatriz=".$matriz.",idCobranca=".$cobranca.
                             ",situacao='".$situacao."',fonte='".$siglaAeroporto."',origem='MNL',cadastro=UTC_TIMESTAMP() WHERE id = ".$id;
             } else {
-                $comando = "INSERT INTO gear_operadores (operador,nome,iata,icao,grupo,cpfCnpj,idMatriz,idCobranca,situacao,origem,fonte,cadastro) VALUES ('".
+                $comando = "INSERT INTO planta_operadores (operador,nome,iata,icao,grupo,cpfCnpj,idMatriz,idCobranca,situacao,origem,fonte,cadastro) VALUES ('".
                             $operador."','".$nome."','".$iata."','".$icao."','".$grupo."','".$cpfCnpj.
                             "',".$matriz.",".$cobranca.",'".$situacao."','MNL','".$siglaAeroporto."', UTC_TIMESTAMP())";
             }
             $sql = $conexao->prepare($comando); 
             if ($sql->execute()) {
                 if ($sql->rowCount() > 0) {
-                    gravaDLog("gear_operadores", ($id != "" ? "Alteração" : "Inclusão"), $_SESSION['plantaAeroporto'], 
+                    gravaDLog("planta_operadores", ($id != "" ? "Alteração" : "Inclusão"), $_SESSION['plantaSite'], 
                                 $_SESSION['plantaUsuario'], ($id != "" ? $id  : $conexao->lastInsertId()), $comando);  
                     montarMensagem("success",array("Registro ".($id != "" ? "alterado" : "incluído")." com sucesso!"));
                     $id = null;
@@ -125,10 +125,10 @@ if ($evento == "recuperar" && $id != "") {
 if ($evento == "excluir" && $id != "") {
     try {
         $conexao = conexao();
-        $comando = "DELETE FROM gear_operadores WHERE id = ".$id;
+        $comando = "DELETE FROM planta_operadores WHERE id = ".$id;
         $sql = $conexao->prepare($comando); 
         if ($sql->execute()){
-            gravaDLog("gear_operadores", "Exclusão", $_SESSION['plantaAeroporto'], $_SESSION['plantaUsuario'], $id, $comando);   
+            gravaDLog("planta_operadores", "Exclusão", $_SESSION['plantaSite'], $_SESSION['plantaUsuario'], $id, $comando);   
             montarMensagem("success",array("Registro excluído com sucesso!"));
             $id = null;
             $limparCampos = true;

@@ -108,16 +108,16 @@ require_once("../suporte/suConexao.php");
         try {
             $conexao = conexao();
             if ($id != "") {
-                $comando = "UPDATE gear_tarefas SET codigo = '".$codigo."', descricao = '".$descricao."', tmpTolerancia = ".
+                $comando = "UPDATE planta_tarefas SET codigo = '".$codigo."', descricao = '".$descricao."', tmpTolerancia = ".
                             $tmpTolerancia.", email = '".$email."', situacao = '".$situacao."', cadastro  = UTC_TIMESTAMP() WHERE id = ".$id;
             } else {
-                $comando = "INSERT INTO gear_tarefas (codigo, descricao, tmpTolerancia, email, situacao, cadastro) VALUES ('".
+                $comando = "INSERT INTO planta_tarefas (codigo, descricao, tmpTolerancia, email, situacao, cadastro) VALUES ('".
                             $codigo."', '".$descricao."', ".$tmpTolerancia.", '".$email."', '".$situacao."', UTC_TIMESTAMP())";
             }
             $sql = $conexao->prepare($comando); 
             if ($sql->execute()) {
                 if ($sql->rowCount() > 0) {
-                    gravaDLogAPI("gear_tarefas", ($id != "" ? "Alteração" : "Inclusão"), $siglaAeroporto, $usuario, 
+                    gravaDLogAPI("planta_tarefas", ($id != "" ? "Alteração" : "Inclusão"), $siglaAeroporto, $usuario, 
                                 ($id != "" ? $id  : $conexao->lastInsertId()), $comando);       
                     $_retorno = ['status' => 'OK', 'msg'=> "Registro ".($id != "" ? "alterado" : "incluído")." com sucesso!"];
                 } else {
@@ -138,10 +138,10 @@ require_once("../suporte/suConexao.php");
     if ($_funcao == "Excluir") {
         try {
             $conexao = conexao();
-            $comando = "DELETE FROM gear_tarefas WHERE id = ".$id;
+            $comando = "DELETE FROM planta_tarefas WHERE id = ".$id;
             $sql = $conexao->prepare($comando); 
             if ($sql->execute()){
-                gravaDLogAPI("gear_tarefas", "Exclusão", $siglaAeroporto, $usuario, $id, $comando);   
+                gravaDLogAPI("planta_tarefas", "Exclusão", $siglaAeroporto, $usuario, $id, $comando);   
                 $_retorno = ['status' => 'OK', 'msg'=> "Registro excluído com sucesso!"];
             } else {
                 throw new PDOException("Não foi possível excluir este registro!");

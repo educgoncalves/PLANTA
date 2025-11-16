@@ -13,9 +13,9 @@ if (empty($mdDados['mtxIcao']) || empty($mdDados['mtxNome']) || empty($mdDados['
 } else {
     try {
         $mdConexao = conexao();
-        $mdComando = "INSERT INTO gear_aeroportos (iata, icao, nome, localidade, pais, situacao, origem, fonte, cadastro) VALUES ('".
+        $mdComando = "INSERT INTO planta_aeroportos (iata, icao, nome, localidade, pais, situacao, origem, fonte, cadastro) VALUES ('".
             $mdDados['mtxIata']."', '".$mdDados['mtxIcao']."', '".$mdDados['mtxNome']."', '".$mdDados['mtxLocalidade']."', '".
-            $mdDados['mtxPais']."', 'ATV','MNL','".$_SESSION['plantaAeroporto']."', UTC_TIMESTAMP())";
+            $mdDados['mtxPais']."', 'ATV','MNL','".$_SESSION['plantaSite']."', UTC_TIMESTAMP())";
         $mdSql = $mdConexao->prepare($mdComando); 
         if ($mdSql->execute()) {
             if ($mdSql->rowCount() > 0) {

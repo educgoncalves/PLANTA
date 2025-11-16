@@ -7,9 +7,9 @@ verificarExecucao();
 
 // Recuperando as informações do Aeroporto
 $usuario = $_SESSION['plantaUsuario'];
-$aeroporto = $_SESSION['plantaIDAeroporto'];
-$utcAeroporto = $_SESSION['plantaUTCAeroporto'];
-$siglaAeroporto = $_SESSION['plantaAeroporto'];
+$aeroporto = $_SESSION['plantaIDSite'];
+$utcAeroporto = $_SESSION['plantaUTCSite'];
+$siglaAeroporto = $_SESSION['plantaSite'];
 
 // Recebendo eventos e parametros para executar os procedimentos
 $evento = carregarGets('evento',carregarPosts('evento'));

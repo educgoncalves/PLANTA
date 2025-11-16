@@ -633,7 +633,8 @@ function listarArquivos($_path, $_extensao = "*", $_ordem = 0) {
     if (count($_diretorio) > 0){
         foreach ($_diretorio as $_arquivo) {
             if ($_extensao == "*" || strpos($_arquivo, '.'.$_extensao)) {
-                $_pastas[] = ["nome"=>$_path.$_arquivo]; 
+                $_data = date("Ymd",filemtime($_path.$_arquivo));
+                $_pastas[] = ["nome"=>$_path.$_arquivo, "data"=>$_data]; 
             }
         }
     }
@@ -656,14 +657,14 @@ function apagarArquivos($_path, $_extensao = "*") {
 function gravaXTrace($_msg){
     if (isset($_SESSION['plantaDebug']) && $_SESSION['plantaDebug'] == 'SIM') {
         // Data e hora local do aeroporto
-        $date = dateTimeUTC($_SESSION['plantaUTCAeroporto']);
-        $_trace = fopen('../logs/trace_'.$_SESSION['plantaAeroporto'].'_'.$date->format("Ymd").'.txt','a'); 
+        $date = dateTimeUTC($_SESSION['plantaUTCSite']);
+        $_trace = fopen('../logs/trace_'.$_SESSION['plantaSite'].'_'.$date->format("Ymd").'.txt','a'); 
         if ($_trace) {
             fwrite($_trace, $date->format("Y-m-d H:i:s")." <> ".$_SERVER["REQUEST_URI"]."\n".$_msg.
                     "\n****************************************************************************************\n");
             fclose($_trace);
         // } else {
-        //     montarMensagem("warning", array("Erro na abertura do arquivo ../logs/trace_".$_SESSION['plantaAeroporto']."_...!"));
+        //     montarMensagem("warning", array("Erro na abertura do arquivo ../logs/trace_".$_SESSION['plantaSite']."_...!"));
         }            
     }
     return;
@@ -810,9 +811,9 @@ function destacarCabecalho($_cabecalho, $_tipo = 'padrao'){
 function executaAPIs($_php,$_post) {
     // Monta a URL 
     if ($_SERVER["HTTP_HOST"] == "localhost") {
-        $_url = 'http://localhost/gear/api/'.$_php;
+        $_url = 'http://localhost/planta/api/'.$_php;
     } else {
-        $_url = 'https://gear.encodeinformatica.com.br/api/'.$_php;
+        $_url = 'https://planta.encodeinformatica.com.br/api/'.$_php;
     }
     $_api = curl_init();
     curl_setopt_array($_api, [
@@ -912,10 +913,10 @@ function validarToken($_token){
 
 // Verifica o número de conexões
 //
-function verificarConexao($_aeroporto, $_sistema, $_usuario, $_identificacao) {
+function verificarConexao($_site, $_sistema, $_usuario, $_identificacao) {
     // Preparando chamada da API apiLogins
     $_token = gerarToken('GEAR');
-    $_dados = ['usuario'=>$_usuario,'identificacao'=>$_identificacao,'aeroporto'=>$_aeroporto,'sistema'=>$_sistema];
+    $_dados = ['usuario'=>$_usuario,'identificacao'=>$_identificacao,'site'=>$_site,'sistema'=>$_sistema];
     $_post = ['token'=>$_token,'funcao'=>'VerificarConexao','dados'=>$_dados];
     $_retorno = executaAPIs('apiLogins.php', $_post);
     if ($_retorno['status'] == 'ERRO'){
@@ -927,10 +928,10 @@ function verificarConexao($_aeroporto, $_sistema, $_usuario, $_identificacao) {
 
 // Verifica o número de conexões ativas
 //
-function verificarConexaoAtiva($_aeroporto, $_sistema, $_usuario, $_identificacao) {
+function verificarConexaoAtiva($_site, $_sistema, $_usuario, $_identificacao) {
     // Preparando chamada da API apiLogins
     $_token = gerarToken('GEAR');
-    $_dados = ['usuario'=>$_usuario,'identificacao'=>$_identificacao,'aeroporto'=>$_aeroporto,'sistema'=>$_sistema];
+    $_dados = ['usuario'=>$_usuario,'identificacao'=>$_identificacao,'site'=>$_site,'sistema'=>$_sistema];
     $_post = ['token'=>$_token,'funcao'=>'VerificarConexaoAtiva','dados'=>$_dados];
     $_retorno = executaAPIs('apiLogins.php', $_post);
     if ($_retorno['status'] == 'ERRO'){
@@ -940,8 +941,9 @@ function verificarConexaoAtiva($_aeroporto, $_sistema, $_usuario, $_identificaca
     }
 }
 
-// Calula a hora local do Aeroporto
+// Calula a hora local do Site
 function dateTimeUTC($_utc = 0) {
+    $_utc = (isNullOrEmpty($_utc) ? 0 : $_utc);
     return (date_create('now', timezone_open('UTC'))->modify($_utc.' hours'));
 }
 

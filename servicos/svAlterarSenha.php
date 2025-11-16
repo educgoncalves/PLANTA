@@ -20,7 +20,7 @@ if ($evento == "salvar") {
     $erros = camposPreenchidos(['chaveNova','chaveAtual','confirmacao']);
     if (!$erros) {
         // Verifica se a senha nova está confirmada 
-        $comando = "UPDATE gear_usuarios SET senha = sha1('".$chaveNova."') WHERE usuario = '".
+        $comando = "UPDATE planta_usuarios SET senha = sha1('".$chaveNova."') WHERE usuario = '".
         $_SESSION['plantaUsuario']."' AND senha = sha1('".$chaveAtual."')";
         try {
             if ($chaveNova == $confirmacao) {

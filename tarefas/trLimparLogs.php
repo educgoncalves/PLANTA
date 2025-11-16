@@ -39,7 +39,7 @@ function executarLimparLogs($identificacao, $usuario = 'GEAR', $modo = 'AUT') {
         $data = date_create()->modify('-10 days')->format('Ymd');
         $registros = 0;
         $conexao = conexao();
-        $comando = "DELETE FROM gear_logs WHERE DATE_FORMAT(cadastro,'%Y%m%d') <= '".$data."' AND operacao <> 'Exibição'";
+        $comando = "DELETE FROM planta_logs WHERE DATE_FORMAT(cadastro,'%Y%m%d') <= '".$data."' AND operacao <> 'Exibição'";
         $sql = $conexao->prepare($comando); 
         if ($sql->execute()){
             $registros = $sql->rowCount();  

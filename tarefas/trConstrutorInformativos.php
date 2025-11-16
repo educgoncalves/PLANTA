@@ -4,13 +4,13 @@ require_once("../suporte/suFuncoes.php");
 require_once("../suporte/suConexao.php");
 require_once("../informativos/inFuncoes.php");
 
-function construtorInformativos($identificacao, $idAeroporto, $siglaAeroporto, $usuario = 'GEAR', $modo = 'AUT') {
+function construtorInformativos($identificacao, $idSite, $siglaAeroporto, $usuario = 'GEAR', $modo = 'AUT') {
     $tarefa = 'CINF';
     $resultado = "trConstrutorInformativos_".$identificacao;
     $_mensagens[] = "";
     $_mensagens[] = "Construtor Informativos - executado por ".$usuario;
     $_mensagens[] = "";
-    $_mensagens[] = "Parâmentros: ".$idAeroporto.' '.$usuario.' '.$modo;
+    $_mensagens[] = "Parâmentros: ".$idSite.' '.$usuario.' '.$modo;
     
     $erros = array();
 
@@ -23,7 +23,7 @@ function construtorInformativos($identificacao, $idAeroporto, $siglaAeroporto, $
         }
 
     // Montar a propaganda quando for o caso
-        $propaganda = montarPropaganda($idAeroporto, $siglaAeroporto, $usuario);
+        $propaganda = montarPropaganda($idSite, $siglaAeroporto, $usuario);
     // ******************************************************************************************        
 
     // Gerando tela html - Movimentos Grupo I - pagina 1 e 2
@@ -48,13 +48,13 @@ function construtorInformativos($identificacao, $idAeroporto, $siglaAeroporto, $
             if (file_exists($base)) {
                 $conteudo = file_get_contents($base);
                 if ($conteudo) {
-                    $chaves = array('$page','$titulo','$subTitulo','$idAeroporto','$siglaAeroporto','$propaganda');
-                    $dados = array($page, $titulo, $subTitulo, $idAeroporto, $siglaAeroporto, $propaganda['propaganda']);
+                    $chaves = array('$page','$titulo','$subTitulo','$idSite','$siglaAeroporto','$propaganda');
+                    $dados = array($page, $titulo, $subTitulo, $idSite, $siglaAeroporto, $propaganda['propaganda']);
                     $conteudo = str_replace($chaves, $dados, $conteudo);
                     
                     // Monta as informações do sistema 
                     $_mensagens[] = 'Montagem para '.$siglaAeroporto.' - página: '.$page." tela: ".$titulo;
-                    $tabela = inMovimentosGrupoI($idAeroporto, $page, $limite);
+                    $tabela = inMovimentosGrupoI($idSite, $page, $limite);
                     $conteudo = str_replace('$tabela', $tabela, $conteudo);
                     if ($tabela == "") {
                         $erros[] = "Informações para ".$siglaAeroporto."-".$titulo." não foram montadas!";
@@ -95,13 +95,13 @@ function construtorInformativos($identificacao, $idAeroporto, $siglaAeroporto, $
             if (file_exists($base)) {
                 $conteudo = file_get_contents($base);
                 if ($conteudo) {
-                    $chaves = array('$page','$titulo','$subTitulo','$idAeroporto','$siglaAeroporto','$propaganda');
-                    $dados = array($page, $titulo, $subTitulo, $idAeroporto, $siglaAeroporto, $propaganda['propaganda']);
+                    $chaves = array('$page','$titulo','$subTitulo','$idSite','$siglaAeroporto','$propaganda');
+                    $dados = array($page, $titulo, $subTitulo, $idSite, $siglaAeroporto, $propaganda['propaganda']);
                     $conteudo = str_replace($chaves, $dados, $conteudo);
                     
                     // Monta as informações do sistema 
                     $_mensagens[] = 'Montagem para '.$siglaAeroporto.' - página: '.$page." tela: ".$titulo;
-                    $tabela = inMovimentosGrupoII($idAeroporto, $page, $limite);
+                    $tabela = inMovimentosGrupoII($idSite, $page, $limite);
                     $conteudo = str_replace('$tabela', $tabela, $conteudo);
                     if ($tabela == "") {
                         $erros[] = "Informações para ".$siglaAeroporto."-".$titulo." não foram montadas!";

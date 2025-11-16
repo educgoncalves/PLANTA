@@ -13,11 +13,11 @@ if (empty($mdDados['mtxMatricula']) || empty($mdDados['mslCategoria'])) {
 } else {
     try {
         $mdConexao = conexao();
-        $mdComando = "INSERT INTO gear_matriculas(matricula,idEquipamento,idOperador,assentos,pmd,categoria,situacao,origem,fonte,cadastro)".
+        $mdComando = "INSERT INTO planta_matriculas(matricula,idEquipamento,idOperador,assentos,pmd,categoria,situacao,origem,fonte,cadastro)".
             " VALUES ('".$mdDados['mtxMatricula']."',".
-            "(SELECT id FROM gear_equipamentos WHERE equipamento = 'GEAR'),".
-            "(SELECT id FROM gear_operadores WHERE operador = 'GEAR'),".
-            "0,0,'".$mdDados['mslCategoria']."','ATV','MNL','".$_SESSION['plantaAeroporto']."', UTC_TIMESTAMP())";
+            "(SELECT id FROM planta_equipamentos WHERE equipamento = 'GEAR'),".
+            "(SELECT id FROM planta_operadores WHERE operador = 'GEAR'),".
+            "0,0,'".$mdDados['mslCategoria']."','ATV','MNL','".$_SESSION['plantaSite']."', UTC_TIMESTAMP())";
         $mdSql = $mdConexao->prepare($mdComando); 
         if ($mdSql->execute()) {
             if ($mdSql->rowCount() > 0) {

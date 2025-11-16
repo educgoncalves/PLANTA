@@ -115,19 +115,19 @@ require_once("../suporte/suConexao.php");
             $comando = "";
             $conexao = conexao();
             if ($id != "") {
-                $comando = "UPDATE gear_menus SET sistema = '".$sistema."', tipo = '".$tipo."', formulario='".$formulario.
+                $comando = "UPDATE planta_menus SET sistema = '".$sistema."', tipo = '".$tipo."', formulario='".$formulario.
                             "', modulo='".$modulo."', descricao='".$descricao."', href='".$href."', target='".$target.
                             "', iconeSVG='".$iconeSVG."', ordem=".$ordem.", atalho='".$atalho.
                             "',cadastro = UTC_TIMESTAMP() WHERE id = ".$id;
             } else {
-                $comando = "INSERT INTO gear_menus(sistema, tipo, formulario, modulo, descricao, href, target, iconeSVG, ordem, atalho, cadastro) VALUES ('".
+                $comando = "INSERT INTO planta_menus(sistema, tipo, formulario, modulo, descricao, href, target, iconeSVG, ordem, atalho, cadastro) VALUES ('".
                             $sistema."','".$tipo."','".$formulario."','".$modulo."','".$descricao."','".$href."','".$target.
                             "','".$iconeSVG."',".$ordem.",'".$atalho."', UTC_TIMESTAMP())";
             }
             $sql = $conexao->prepare($comando); 
             if ($sql->execute()) {
                 if ($sql->rowCount() > 0) {
-                    gravaDLogAPI("gear_menus", ($id != "" ? "Alteração" : "Inclusão"), $siglaAeroporto, $usuario, 
+                    gravaDLogAPI("planta_menus", ($id != "" ? "Alteração" : "Inclusão"), $siglaAeroporto, $usuario, 
                                 ($id != "" ? $id  : $conexao->lastInsertId()), $comando);       
                     $_retorno = ['status' => 'OK', 'msg'=> "Registro ".($id != "" ? "alterado" : "incluído")." com sucesso!"];
                 } else {
@@ -148,10 +148,10 @@ require_once("../suporte/suConexao.php");
     if ($_funcao == "Excluir") {
         try {
             $conexao = conexao();
-            $comando = "DELETE FROM gear_menus WHERE id = ".$id;
+            $comando = "DELETE FROM planta_menus WHERE id = ".$id;
             $sql = $conexao->prepare($comando); 
             if ($sql->execute()){
-                gravaDLogAPI("gear_menus", "Exclusão", $siglaAeroporto, $usuario, $id, $comando);   
+                gravaDLogAPI("planta_menus", "Exclusão", $siglaAeroporto, $usuario, $id, $comando);   
                 $_retorno = ['status' => 'OK', 'msg'=> "Registro excluído com sucesso!"];
             } else {
                 throw new PDOException("Não foi possível excluir este registro!");
@@ -169,12 +169,12 @@ require_once("../suporte/suConexao.php");
     if ($_funcao == "Copiar") {
         try {
             $conexao = conexao();
-            $comando = "INSERT INTO gear_menus (sistema, tipo, formulario, modulo, descricao, href, target, iconeSVG, ordem, atalho, cadastro)
+            $comando = "INSERT INTO planta_menus (sistema, tipo, formulario, modulo, descricao, href, target, iconeSVG, ordem, atalho, cadastro)
                         SELECT sistema, tipo, formulario, modulo, descricao, href, target, iconeSVG, ordem, atalho, UTC_TIMESTAMP()
-                        FROM gear_menus WHERE id = ".$id;
+                        FROM planta_menus WHERE id = ".$id;
             $sql = $conexao->prepare($comando); 
             if ($sql->execute()){
-                gravaDLogAPI("gear_menus", "Copiar", $siglaAeroporto, $usuario, $id, $comando);   
+                gravaDLogAPI("planta_menus", "Copiar", $siglaAeroporto, $usuario, $id, $comando);   
                 $_retorno = ['status' => 'OK', 'msg'=> "Registro copiado com sucesso!"];
             } else {
                 throw new PDOException("Não foi possível copiar este registro!");

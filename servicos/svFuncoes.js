@@ -14,10 +14,10 @@ async function svCarregarLogsAtividades(funcao, filtro = '', ordem = '', descric
         await $.getJSON('../suporte/suBuscar.php?funcao=Logs&filtro='+encodeURIComponent(filtro)+'&ordem='+ordem+'&pagina='+pagina+'&limite='+limite, function (dados){
             if (dados != null) {
                 htmlTabela += "<table class='table table-striped table-hover table-bordered table-reduzida table-sm'><thead class='table-info'><tr>"+
-                        "<th>Data</th><th>Tabela</th><th>Operação</th><th>Aeroporto</th><th>Usuário</th><th>Registro</th><th>Comando</th><th>Observação</th>"+
+                        "<th>Data</th><th>Tabela</th><th>Operação</th><th>Site</th><th>Usuário</th><th>Registro</th><th>Comando</th><th>Observação</th>"+
                         (funcao == 'Cadastrar' ? "<th>Ação</th>" : "")+"</tr></thead><tbody>";
                 htmlImpressao += "<table class='table table-striped table-hover table-bordered table-reduzida table-sm'><thead><tr>"+
-                        "<th>Data</th><th>Tabela</th><th>Operação</th><th>Aeroporto</th><th>Usuário</th><th>Registro</th><th>Comando</th><th>Observação</th>"+
+                        "<th>Data</th><th>Tabela</th><th>Operação</th><th>Site</th><th>Usuário</th><th>Registro</th><th>Comando</th><th>Observação</th>"+
                         "</tr></thead><tbody>";
 
                 $.each(dados, function(i, obj){
@@ -26,7 +26,7 @@ async function svCarregarLogsAtividades(funcao, filtro = '', ordem = '', descric
                                 obj.cadastro+"</a>" : obj.cadastro) + '</td>'+
                                 '<td>'+obj.tabela+'</td>'+
                                 '<td>'+obj.operacao+'</td>'+
-                                '<td>'+obj.aeroporto+'</td>'+
+                                '<td>'+obj.site+'</td>'+
                                 '<td>'+obj.usuario+'</td>'+
                                 '<td>'+obj.registro+'</td>'+
                                 '<td>'+obj.comando+'</td>'+
@@ -41,7 +41,7 @@ async function svCarregarLogsAtividades(funcao, filtro = '', ordem = '', descric
                     htmlImpressao += '<tr><td>'+obj.cadastro+'</td>'+
                                 '<td>'+obj.tabela+'</td>'+
                                 '<td>'+obj.operacao+'</td>'+
-                                '<td>'+obj.aeroporto+'</td>'+
+                                '<td>'+obj.site+'</td>'+
                                 '<td>'+obj.usuario+'</td>'+
                                 '<td>'+obj.registro+'</td>'+
                                 '<td>'+obj.comando+'</td>'+

@@ -28,8 +28,8 @@ switch ($_tabela) {
     case 'StsDestino':
     case 'Destino':
         $_query = "SELECT id, descricao FROM 
-                    (SELECT ae.id, CONCAT(ae.icao, ' - ', ae.localidade) as descricao 
-                        FROM gear_aeroportos ae
+                    (SELECT ae.id, CONCAT(st.site, ' - ', st.localidade) as descricao 
+                        FROM planta_aeroportos ae
                         WHERE ae.situacao = 'ATV') T
                     WHERE descricao LIKE :pesquisa 
                     ORDER BY descricao LIMIT 10";        
@@ -41,7 +41,7 @@ switch ($_tabela) {
     case 'Equipamento':
         $_query = "SELECT id, descricao FROM 
                     (SELECT id, CONCAT(eq.equipamento,' - ',eq.modelo) as descricao 
-                        FROM gear_equipamentos eq
+                        FROM planta_equipamentos eq
                         WhERE eq.situacao = 'ATV') T
                     WHERE descricao LIKE :pesquisa 
                     ORDER BY descricao LIMIT 10";        
@@ -49,14 +49,14 @@ switch ($_tabela) {
    
     case 'EquipamentosAsa':
 		$_query = "SELECT dm.codigo as id, dm.descricao
-					FROM gear_dominios dm
+					FROM planta_dominios dm
 					WHERE dm.tabela = 'planta_equipamentos' and dm.coluna = 'asa' AND dm.descricao LIKE :pesquisa 
 					ORDER BY dm.ordenacao, dm.descricao LIMIT 10";
 	break;
 
     case 'EquipamentosTipoMotor':
 		$_query = "SELECT dm.codigo as id, dm.descricao
-					FROM gear_dominios dm
+					FROM planta_dominios dm
 					WHERE dm.tabela = 'planta_equipamentos' and dm.coluna = 'tipoMotor' AND dm.descricao LIKE :pesquisa 
 					ORDER BY dm.ordenacao, dm.descricao LIMIT 10";
 	break;
@@ -66,9 +66,9 @@ switch ($_tabela) {
                     FROM 
                     (   SELECT 'ANAC' as id, 'ANAC' as descricao
                             UNION
-                        SELECT DISTINCT ae.icao as id, ae.icao as descricao
-                        FROM gear_aeroportos ae
-                        INNER JOIN gear_clientes cl ON cl.idAeroporto = ae.id
+                        SELECT DISTINCT st.site as id, st.site as descricao
+                        FROM planta_aeroportos ae
+                        INNER JOIN planta_clientes cl ON cl.idSite = ae.id
                     ) T
                     WHERE descricao LIKE :pesquisa
                     ORDER BY descricao LIMIT 10";
@@ -80,8 +80,8 @@ switch ($_tabela) {
     case 'Matricula':
         $_query = "SELECT id, descricao FROM 
                     (SELECT mt.id, CONCAT(mt.matricula, ' - ', eq.equipamento) as descricao 
-                        FROM gear_matriculas mt
-                        LEFT JOIN gear_equipamentos eq ON eq.id = mt.idEquipamento
+                        FROM planta_matriculas mt
+                        LEFT JOIN planta_equipamentos eq ON eq.id = mt.idEquipamento
                         WHERE mt.situacao = 'ATV') T
                     WHERE descricao LIKE :pesquisa 
                     ORDER BY descricao LIMIT 10";
@@ -89,7 +89,7 @@ switch ($_tabela) {
 
     case 'MatriculasCategoria':
 		$_query = "SELECT dm.codigo as id, dm.descricao
-					FROM gear_dominios dm
+					FROM planta_dominios dm
 					WHERE dm.tabela = 'planta_matriculas' and dm.coluna = 'categoria' AND dm.descricao LIKE :pesquisa 
 					ORDER BY dm.ordenacao, dm.descricao";
 	break;
@@ -99,8 +99,8 @@ switch ($_tabela) {
     case 'StsMovimento':         
     case 'Movimento':
         $_query = "SELECT mo.movimento as id, mo.descricao
-                    FROM gear_movimentos mo 
-                    WHERE mo.situacao = 'ATV' AND mo.idAeroporto = ".$_SESSION['plantaIDAeroporto'].
+                    FROM planta_movimentos mo 
+                    WHERE mo.situacao = 'ATV' AND mo.idSite = ".$_SESSION['plantaIDSite'].
                     ($_filtro != '' ? " AND mo.operacao = '".$_filtro."'" : "").
                     ($_filtroAuxiliar != '' ? " AND (mo.antecessoras LIKE '%".$_filtroAuxiliar."%' OR mo.antecessoras = '')" : "").
                     " AND mo.descricao LIKE :pesquisa ". 
@@ -110,7 +110,7 @@ switch ($_tabela) {
     case 'Matriz':
         $_query = "SELECT id, descricao FROM 
                     (SELECT op.id, (CASE WHEN IFNULL(op.icao,'') = '' THEN op.operador ELSE CONCAT(op.icao,' - ',op.operador) END) as descricao
-                        FROM gear_operadores op 
+                        FROM planta_operadores op 
                         WHERE op.idMatriz IS NULL AND op.situacao = 'ATV') T
                     WHERE descricao LIKE :pesquisa 
                     ORDER BY descricao LIMIT 10";        
@@ -119,7 +119,7 @@ switch ($_tabela) {
     case 'Cobranca':
         $_query = "SELECT id, descricao FROM 
                     (SELECT opc.id, CONCAT(opc.cpfCnpj,' - ',opc.operador) as descricao
-                        FROM gear_operadores_cobranca opc
+                        FROM planta_operadores_cobranca opc
                         WHERE opc.situacao = 'ATV') T
                     WHERE descricao LIKE :pesquisa 
                     ORDER BY descricao LIMIT 10";        
@@ -128,7 +128,7 @@ switch ($_tabela) {
     case 'Operador':
         $_query = "SELECT id, descricao FROM 
                     (SELECT op.id, (CASE WHEN IFNULL(op.icao,'') = '' THEN op.operador ELSE CONCAT(op.icao,' - ',op.operador) END) as descricao
-                        FROM gear_operadores op
+                        FROM planta_operadores op
                         WHERE op.situacao = 'ATV') T
                     WHERE descricao LIKE :pesquisa
                     ORDER BY descricao LIMIT 10";        
@@ -142,15 +142,15 @@ switch ($_tabela) {
     case 'StsSegundoRecurso':
     case 'Recurso':        
 		$_query = "SELECT re.id, re.recurso as descricao
-					FROM gear_recursos re
-                    WHERE re.situacao = 'ATV' AND re.idAeroporto = ".$_SESSION['plantaIDAeroporto'].
+					FROM planta_recursos re
+                    WHERE re.situacao = 'ATV' AND re.idSite = ".$_SESSION['plantaIDSite'].
                     ($_filtro != '' ? " AND re.tipo = '".$_filtro."'" : "")." AND re.recurso LIKE :pesquisa ". 
                     " ORDER BY re.tipo,re.recurso LIMIT 10";
 	break;
 
     case 'StsCmpRegra':
         $_query = "SELECT dm.codigo as id, dm.descricao as descricao
-                    FROM gear_dominios dm
+                    FROM planta_dominios dm
                     WHERE dm.tabela = 'planta_status_complementos' AND dm.coluna = 'regra' AND dm.descricao LIKE :pesquisa 
                     ORDER BY dm.ordenacao, dm.descricao LIMIT 10";
     break;
@@ -158,7 +158,7 @@ switch ($_tabela) {
     case 'StsCmpComando': 
     case 'Comandantes':        
 		$_query = "SELECT co.id, CONCAT(co.codigoAnac,' - ',co.nome) as descricao
-					FROM gear_comandantes co
+					FROM planta_comandantes co
                     WHERE co.situacao = 'ATV' AND CONCAT(co.codigoAnac,' - ',co.nome) LIKE :pesquisa ". 
                     " ORDER BY co.codigoAnac LIMIT 10";
 	break;
@@ -168,8 +168,8 @@ switch ($_tabela) {
     case 'StsOrigem':
     case 'Origem':
         $_query = "SELECT id, descricao FROM 
-                    (SELECT ae.id, CONCAT(ae.icao, ' - ', ae.localidade) as descricao 
-                        FROM gear_aeroportos ae
+                    (SELECT ae.id, CONCAT(st.site, ' - ', st.localidade) as descricao 
+                        FROM planta_aeroportos ae
                         WHERE ae.situacao = 'ATV') T
                     WHERE descricao LIKE :pesquisa 
                     ORDER BY descricao LIMIT 10";        
@@ -179,7 +179,7 @@ switch ($_tabela) {
     case 'PrtClasse':
     case 'StsClasse':
         $_query = "SELECT dm.codigo as id, CONCAT(dm.codigo,' - ',dm.descricao) as descricao
-                    FROM gear_dominios dm
+                    FROM planta_dominios dm
                     WHERE dm.tabela = 'planta_voos' AND dm.coluna = 'classe' AND CONCAT(dm.codigo,' - ',dm.descricao) LIKE :pesquisa 
                     ORDER BY dm.ordenacao, dm.descricao LIMIT 10";
     break;
@@ -188,7 +188,7 @@ switch ($_tabela) {
     case 'PrtNatureza':
     case 'StsNatureza':
         $_query = "SELECT dm.codigo as id, CONCAT(dm.codigo,' - ',dm.descricao) as descricao
-                    FROM gear_dominios dm
+                    FROM planta_dominios dm
                     WHERE dm.tabela = 'planta_voos' AND dm.coluna = 'natureza' AND CONCAT(dm.codigo,' - ',dm.descricao) LIKE :pesquisa 
                     ORDER BY dm.ordenacao, dm.descricao LIMIT 10";
     break;
@@ -197,21 +197,21 @@ switch ($_tabela) {
     case 'PrtServico':
     case 'StsServico':
         $_query = "SELECT dm.codigo as id, CONCAT(dm.codigo,' - ',dm.descricao) as descricao
-                    FROM gear_dominios dm
+                    FROM planta_dominios dm
                     WHERE dm.tabela = 'planta_voos' AND dm.coluna = 'servico' AND CONCAT(dm.codigo,' - ',dm.descricao) LIKE :pesquisa 
                     ORDER BY dm.ordenacao, dm.descricao LIMIT 10";
     break;
 
     case 'TodosGrupo':
         $_query = "SELECT dm.codigo as id, dm.descricao
-                    FROM gear_dominios dm
+                    FROM planta_dominios dm
                     WHERE dm.tabela = 'planta_todos' AND dm.coluna = 'grupo' AND dm.descricao LIKE :pesquisa 
                     ORDER BY dm.ordenacao, dm.descricao";
     break;
 
     case 'TodosSituacao':
 		$_query = "SELECT dm.codigo as id, dm.descricao
-					FROM gear_dominios dm
+					FROM planta_dominios dm
 					WHERE dm.tabela = 'planta_todos' AND dm.coluna = 'situacao' AND dm.descricao LIKE :pesquisa 
 					ORDER BY dm.ordenacao, dm.descricao LIMIT 10";
 	break;

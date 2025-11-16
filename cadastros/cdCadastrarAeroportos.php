@@ -15,8 +15,8 @@ $token = gerarToken($_SESSION['plantaSistema']);
 
 // Recuperando as informações do Aeroporto
 $usuario = $_SESSION['plantaUsuario'];
-$utcAeroporto = $_SESSION['plantaUTCAeroporto'];
-$siglaAeroporto = $_SESSION['plantaAeroporto'];
+$utcAeroporto = $_SESSION['plantaUTCSite'];
+$siglaAeroporto = $_SESSION['plantaSite'];
 
 // Recebendo eventos e parametros para executar os procedimentos
 $evento = carregarGets('evento',carregarPosts('evento'));
@@ -115,7 +115,7 @@ if ($limparCampos == true) {
 
 // Ponto para exibição do formulário
 formulario:
-$ordenacao = carregarCookie($siglaAeroporto.'_cdCA_ordenacao','ae.icao');
+$ordenacao = carregarCookie($siglaAeroporto.'_cdCA_ordenacao','st.site');
 metaTagsBootstrap('');
 $titulo = "Aeroportos";
 ?>
@@ -253,10 +253,10 @@ $titulo = "Aeroportos";
                     <div class="col-md-8">
                         <label for="pslOrdenacao">Ordenação da lista</label>
                         <select class="form-select selCookie input-lg" id="pslOrdenacao">
-                            <option <?=($ordenacao == 'ae.icao') ? 'selected' : '';?> value='ae.icao'>ICAO</option>
+                            <option <?=($ordenacao == 'st.site') ? 'selected' : '';?> value='st.site'>ICAO</option>
                             <option <?=($ordenacao == 'ae.iata') ? 'selected' : '';?> value='ae.iata'>IATA</option>
-                            <option <?=($ordenacao == 'ae.nome,ae.icao') ? 'selected' : '';?> value='ae.nome,ae.icao'>Nome</option>
-                            <option <?=($ordenacao == 'ae.localidade,ae.icao') ? 'selected' : '';?> value='ae.localidade,ae.icao'>Localidade</option>
+                            <option <?=($ordenacao == 'st.nome,st.site') ? 'selected' : '';?> value='st.nome,st.site'>Nome</option>
+                            <option <?=($ordenacao == 'st.localidade,st.site') ? 'selected' : '';?> value='st.localidade,st.site'>Localidade</option>
                         </select> 
                     </div>
                 </div>
@@ -291,7 +291,7 @@ $titulo = "Aeroportos";
                 if (!isEmpty($(this).val())) {
                     switch ($(this).attr('id')) {
                         case "ptxIcao":
-                            filtro += " AND ae.icao LIKE '%"+$("#ptxIcao").val()+"%'";
+                            filtro += " AND st.site LIKE '%"+$("#ptxIcao").val()+"%'";
                             descricaoFiltro += " <br>ICAO : "+$("#ptxIcao").val();
                         break;
                         case "ptxIata":
@@ -299,11 +299,11 @@ $titulo = "Aeroportos";
                             descricaoFiltro += " <br>IATA : "+$("#ptxIata").val();
                         break;
                         case "ptxNome":
-                            filtro += " AND ae.nome LIKE '%"+$("#ptxNome").val()+"%'";
+                            filtro += " AND st.nome LIKE '%"+$("#ptxNome").val()+"%'";
                             descricaoFiltro += " <br>Nome : "+$("#ptxNome").val();
                         break;
                         case "ptxLocalidade":
-                            filtro += " AND ae.localidade LIKE '%"+$("#ptxLocalidade").val()+"%'";
+                            filtro += " AND st.localidade LIKE '%"+$("#ptxLocalidade").val()+"%'";
                             descricaoFiltro += " <br>Localidade : "+$("#ptxLocalidade").val();
                         break;
                         case "ptxPais":

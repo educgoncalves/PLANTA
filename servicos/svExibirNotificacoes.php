@@ -16,10 +16,10 @@ $token = gerarToken($_SESSION['plantaSistema']);
 $usuario = $_SESSION['plantaIDUsuario'];
 $nomeUsuario = $_SESSION['plantaUsuario'];
 $sistema = $_SESSION['plantaSistema'];
-$aeroporto = $_SESSION['plantaIDAeroporto'];
-$utcAeroporto = $_SESSION['plantaUTCAeroporto'];
-$siglaAeroporto = $_SESSION['plantaAeroporto'];
-$nomeAeroporto = $_SESSION['plantaAeroporto'].' - '.$_SESSION['plantaLocalidadeAeroporto'];
+$aeroporto = $_SESSION['plantaIDSite'];
+$utcAeroporto = $_SESSION['plantaUTCSite'];
+$siglaAeroporto = $_SESSION['plantaSite'];
+$nomeSite = $_SESSION['plantaSite'].' - '.$_SESSION['plantaLocalidadeSite'] ;
 
 // Recebendo eventos e parametros para executar os procedimentos
 $evento = carregarGets('evento',carregarPosts('evento'));
@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $id = carregarPosts('id'); 
     $data = carregarPosts('data');
     $ntSistema = carregarPosts('sistema');
-    $ntAeroporto = carregarPosts('aeroporto');
+    $ntAeroporto = carregarPosts('site');
     $notificacao = carregarPosts('notificacao');
     $situacao = carregarPosts('situacao');        
 
@@ -52,14 +52,14 @@ if ($evento == "salvar") {
         try {
             $conexao = conexao();
             if ($id != "") {
-                $comando = "UPDATE gear_notificacoes SET situacao = '".$situacao."' WHERE id = ".$id;
+                $comando = "UPDATE planta_notificacoes SET situacao = '".$situacao."' WHERE id = ".$id;
             } else {
                 throw new PDOException("Não é permitida a inclusão de reserva por este formulário!");
             }
             $sql = $conexao->prepare($comando); 
             if ($sql->execute()) {
                 if ($sql->rowCount() > 0) {
-                    gravaDLog("gear_notificacoes", ($id != "" ? "Alteração" : "Inclusão"), $_SESSION['plantaAeroporto'], 
+                    gravaDLog("planta_notificacoes", ($id != "" ? "Alteração" : "Inclusão"), $_SESSION['plantaSite'], 
                                 $_SESSION['plantaUsuario'], ($id != "" ? $id  : $conexao->lastInsertId()), $comando);                
                     montarMensagem("success",array("Registro ".($id != "" ? "alterado" : "incluído")." com sucesso!"));
                     $id = null;
@@ -88,7 +88,7 @@ if ($evento == "recuperar" && $id != "") {
         foreach ($retorno['dados'] as $dados) {
             $data = $dados['dataHoraCadastro'];
             $ntSistema = $dados['sistema'];
-            $ntAeroporto = $dados['aeroporto'];
+            $ntAeroporto = $dados['site'];
             $notificacao = $dados['notificacao'];
             $situacao = $dados['situacao'];             
         }
@@ -102,10 +102,10 @@ if ($evento == "recuperar" && $id != "") {
 if ($evento == "excluir" && $id != "") {
     try {
         $conexao = conexao();
-        $comando = "DELETE FROM gear_notificacoes WHERE id = ".$id;
+        $comando = "DELETE FROM planta_notificacoes WHERE id = ".$id;
         $sql = $conexao->prepare($comando); 
         if ($sql->execute()){
-            gravaDLog("gear_notificacoes", "Exclusão", $_SESSION['plantaAeroporto'], $_SESSION['plantaUsuario'], $id, $comando);   
+            gravaDLog("planta_notificacoes", "Exclusão", $_SESSION['plantaSite'], $_SESSION['plantaUsuario'], $id, $comando);   
             montarMensagem("success",array("Registro excluído com sucesso!"));
             $id = null;
             $limparCampos = true;
@@ -147,7 +147,7 @@ $titulo = "Notificacoes para o usuário ".$_SESSION['plantaUsuario'];
                 <!--***************************************************************** -->
                 <input type="hidden" id="hdAeroporto" <?="value=\"{$aeroporto}\"";?>/>
                 <input type="hidden" id="hdSiglaAeroporto" <?="value=\"{$siglaAeroporto}\"";?>/>
-                <input type="hidden" id="hdNomeAeroporto" <?="value=\"{$nomeAeroporto}\"";?>/>
+                <input type="hidden" id="hdNomeAeroporto" <?="value=\"{$nomeSite}\"";?>/>
                 <input type="hidden" id="hdUsuario" <?="value=\"{$usuario}\"";?>/>
                 <input type="hidden" id="hdNomeUsuario" <?="value=\"{$nomeUsuario}\"";?>/>
 
@@ -293,7 +293,7 @@ $titulo = "Notificacoes para o usuário ".$_SESSION['plantaUsuario'];
                             descricaoFiltro += " <br>Aeroporto : "+$("#ptxNtSistema").val();
                         break;
                         case "ptxNtAeroporto":
-                            filtro += " AND ae.icao = '"+$("#ptxNtAeroporto").val()+"'";
+                            filtro += " AND st.site = '"+$("#ptxNtAeroporto").val()+"'";
                             descricaoFiltro += " <br>Aeroporto : "+$("#ptxNtAeroporto").val();
                         break;
                         case "ptxNotificacao":

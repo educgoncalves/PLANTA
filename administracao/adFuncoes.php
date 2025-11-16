@@ -16,7 +16,7 @@ function loginUsuarioSenha($_usuario, $_senha){
                 $_SESSION['plantaUsuario'] = $_dados['usuario'];
                 $_SESSION['plantaSenha'] = $_senha;
                 $_SESSION['plantaIDUsuario'] = $_dados['id'];
-                $_SESSION['plantaIDAeroporto'] = $_dados['idAeroporto'];
+                $_SESSION['plantaIDSite'] = $_dados['idSite'];
                 $_SESSION['plantaSistema'] = $_dados['sistema'];
             }
             switch ($_dados['qtdAcessos']) {
@@ -24,7 +24,7 @@ function loginUsuarioSenha($_usuario, $_senha){
                     throw new PDOException("Login sem acesso definido!");
                 break;
                 case 1 :
-                    $_retorno = loginCompleto($_SESSION['plantaIDAeroporto'], $_SESSION['plantaSistema'], $_SESSION['plantaUsuario'], $_SESSION['plantaSenha']);
+                    $_retorno = loginCompleto($_SESSION['plantaIDSite'], $_SESSION['plantaSistema'], $_SESSION['plantaUsuario'], $_SESSION['plantaSenha']);
                 break;
                 default :
                     $_retorno = ['status' => 'OK', 'msg' => "Escolher site"];
@@ -36,7 +36,7 @@ function loginUsuarioSenha($_usuario, $_senha){
     return $_retorno;              
 }
 
-function loginCompleto($_aeroporto, $_sistema, $_usuario, $_senha){
+function loginCompleto($_site, $_sistema, $_usuario, $_senha){
     $_retorno = ['status' => 'ERRO', 'msg' => 'loginCompleto'];
     try {
         // Pegando IP
@@ -52,7 +52,7 @@ function loginCompleto($_aeroporto, $_sistema, $_usuario, $_senha){
 
         // Preparando chamada da API apiLogins
         $_token = gerarToken('GEAR');
-        $_dados = ['usuario'=>$_usuario,'senha'=>$_senha,'aeroporto'=>$_aeroporto,'sistema'=>$_sistema,'identificacao'=>$_ip];
+        $_dados = ['usuario'=>$_usuario,'senha'=>$_senha,'site'=>$_site,'sistema'=>$_sistema,'identificacao'=>$_ip];
         $_post = ['token'=>$_token,'funcao'=>'Completo','dados'=>$_dados];
         $_retorno = executaAPIs('apiLogins.php', $_post);
         if ($_retorno['status'] == 'OK') {
@@ -67,11 +67,11 @@ function loginCompleto($_aeroporto, $_sistema, $_usuario, $_senha){
                     $_SESSION['plantaGrupo'] = $_dados['grupo'];
                     $_SESSION['plantaNivel'] = $_dados['nivel'];
                     $_SESSION['plantaEMail'] = $_dados['email'];
-                    $_SESSION['plantaAeroporto'] = $_dados['aeroporto'];
-                    $_SESSION['plantaIDAeroporto'] = $_dados['idAeroporto'];
-                    $_SESSION['plantaNomeAeroporto'] = $_dados['nomeAeroporto'];
-                    $_SESSION['plantaLocalidadeAeroporto'] = $_dados['localidade'];
-                    $_SESSION['plantaUTCAeroporto'] = $_dados['utc'];
+                    $_SESSION['plantaSite'] = $_dados['site'];
+                    $_SESSION['plantaIDSite'] = $_dados['idSite'];
+                    $_SESSION['plantaNomeSite'] = $_dados['nomeSite'];
+                    $_SESSION['plantaLocalidadeSite']  = $_dados['localidade'];
+                    $_SESSION['plantaUTCSite'] = $_dados['utc'];
                     $_SESSION['plantaServidor'] = $_SERVER["REQUEST_SCHEME"]."://".$_SERVER["HTTP_HOST"].($_SERVER["HTTP_HOST"] == "localhost" ? "/PLANTA" : "");
                     $_SESSION['plantaSistema'] = $_dados['sistema'];
                     $_SESSION['plantaIPCliente'] = $_ip;
@@ -81,11 +81,10 @@ function loginCompleto($_aeroporto, $_sistema, $_usuario, $_senha){
                     $_SESSION['plantaRegPorPagina'] = $_dados['regPorPagina'];
                     $_SESSION['plantaRefreshPagina'] = $_dados['tmpRefreshPagina'];
                     $_SESSION['plantaRefreshTela'] = $_dados['tmpRefreshTela'];
-                    $_SESSION['plantaTaxiG1'] = $_dados['tmpTaxiG1'];
-                    $_SESSION['plantaTaxiG2'] = $_dados['tmpTaxiG2'];
+
 
                     // Ativa conexão
-                    $_retorno = ativarConexao($_SESSION['plantaIDAeroporto'], $_SESSION['plantaSistema'], $_SESSION['plantaUsuario'], $_SESSION['plantaGrupo'], $_SESSION['plantaIPCliente']);
+                    $_retorno = ativarConexao($_SESSION['plantaIDSite'], $_SESSION['plantaSistema'], $_SESSION['plantaUsuario'], $_SESSION['plantaGrupo'], $_SESSION['plantaIPCliente']);
                     if ($_retorno['status'] == "OK"){
                         $_SESSION['plantaIDConexao'] = $_retorno['idConexao'];
                     }
@@ -160,17 +159,17 @@ function criarSenhaRandomica($_usuario, $_email) {
 
 // Ativa conexão do IP
 //
-function ativarConexao($__aeroporto, $__sistema, $__usuario, $__grupo, $__identificacao) {
+function ativarConexao($__site, $__sistema, $__usuario, $__grupo, $__identificacao) {
     $__retorno = ['status' => 'ERRO', 'msg' => 'ativarConexao'];
 
     try {
 		// Desativa qualquer conexão que esteja ativada com as mesmas informações
-        desativarConexao($__aeroporto, $__sistema, $__usuario, $__identificacao);
+        desativarConexao($__site, $__sistema, $__usuario, $__identificacao);
 
         // Ativa a conexão com as informações
 		$__conexao = conexao();
-        $__comando = "INSERT INTO gear_conexoes(idAeroporto, sistema, usuario, grupo, identificacao, entrada, cadastro) VALUES (".
-                    $__aeroporto.", '".$__sistema."', '".$__usuario."', '".$__grupo."', '".
+        $__comando = "INSERT INTO planta_conexoes(idSite, sistema, usuario, grupo, identificacao, entrada, cadastro) VALUES (".
+                    $__site.", '".$__sistema."', '".$__usuario."', '".$__grupo."', '".
                     $__identificacao."', UTC_TIMESTAMP(), UTC_TIMESTAMP())";
         $__sql = $__conexao->prepare($__comando);
         if ($__sql->execute()) {
@@ -190,13 +189,13 @@ function ativarConexao($__aeroporto, $__sistema, $__usuario, $__grupo, $__identi
 
 // Desativa conexão do IP
 //
-function desativarConexao($__aeroporto, $__sistema, $__usuario, $__identificacao) {
+function desativarConexao($__site, $__sistema, $__usuario, $__identificacao) {
     $__retorno = ['status' => 'OK', 'msg' => 'desativarConexao'];
     try {
 		// Pegando usuário do login
 		$__conexao = conexao();
-        $__comando = "UPDATE gear_conexoes SET saida = UTC_TIMESTAMP, situacao = 'INA' WHERE situacao = 'ATV' ".
-                    ($__aeroporto != "" ? " AND idAeroporto = ".$__aeroporto : "").
+        $__comando = "UPDATE planta_conexoes SET saida = UTC_TIMESTAMP, situacao = 'INA' WHERE situacao = 'ATV' ".
+                    ($__site != "" ? " AND idSite = ".$__site : "").
                     ($__sistema != "" ? " AND sistema = '".$__sistema."'" : "").
                     ($__usuario != "" ? " AND usuario = '".$__usuario."'" : "").
                     ($__identificacao != "" ? " AND identificacao = '".$__identificacao."'" : ""); 

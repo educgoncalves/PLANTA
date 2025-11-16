@@ -98,7 +98,7 @@ require_once("../suporte/suConexao.php");
         try {    
             $_senha = rand(222222,99999);
             $_conexao = conexao();
-            $_comando = "UPDATE gear_usuarios us SET senha = sha1('".$_senha."') 
+            $_comando = "UPDATE planta_usuarios us SET senha = sha1('".$_senha."') 
                             WHERE ".(!empty($_usuario) ? " us.usuario = '".$_usuario."' AND " : "").
                                     " us.email = '".$_email."' AND us.situacao = 'ATV' LIMIT 1";
             $_sql = $_conexao->prepare($_comando);

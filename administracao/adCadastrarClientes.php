@@ -14,8 +14,8 @@ $token = gerarToken($_SESSION['plantaSistema']);
 
 // Recuperando as informações do Aeroporto
 $usuario = $_SESSION['plantaUsuario'];
-$utcAeroporto = $_SESSION['plantaUTCAeroporto'];
-$siglaAeroporto = $_SESSION['plantaAeroporto'];
+$utcAeroporto = $_SESSION['plantaUTCSite'];
+$siglaAeroporto = $_SESSION['plantaSite'];
 
 // Recebendo eventos e parametros para executar os procedimentos
 $evento = carregarGets('evento',carregarPosts('evento'));
@@ -26,7 +26,7 @@ $parametros = array('evento'=>$evento);
 $limparCampos = false;
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $id = carregarPosts('id'); 
-    $aeroporto = carregarPosts('aeroporto');
+    $aeroporto = carregarPosts('site');
     $sistema = carregarPosts('sistema');
     $conexoes = carregarPosts('conexoes');
     $debug = carregarPosts('debug');
@@ -58,13 +58,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 // Salvando as informações
 if ($evento == "salvar") {
     // Verifica se campos estão preenchidos
-    $erros = camposPreenchidos(['aeroporto','sistema','conexoes','debug','regPorPagina','utc','categoria','tipoOperador','avsec',
+    $erros = camposPreenchidos(['site','sistema','conexoes','debug','regPorPagina','utc','categoria','tipoOperador','avsec',
                                 'tmpTaxiG1','tmpTaxiG2']);
     if (!$erros) {
         try {
             $conexao = conexao();
             if ($id != "") {
-                $comando = "UPDATE gear_clientes SET idAeroporto = ".$aeroporto.",sistema = '".$sistema."',conexoes = ".$conexoes.
+                $comando = "UPDATE planta_clientes SET idSite = ".$aeroporto.",sistema = '".$sistema."',conexoes = ".$conexoes.
                             ",tmpIsencao = ".$tmpIsencao.",tmpReserva = ".$tmpReserva.",tmpRetorno = ".$tmpRetorno.",tmpTaxiG1 = ".$tmpTaxiG1.
                             ",tmpTaxiG2 = ".$tmpTaxiG2.",tmpRefreshPagina = ".$tmpRefreshPagina.",tmpRefreshTela = ".$tmpRefreshTela.
                             ",debug = '".$debug."',regPorPagina = ".$regPorPagina.",utc = ".$utc.",categoria = '".
@@ -72,7 +72,7 @@ if ($evento == "salvar") {
                             "', hrFechamento = '".$hrFechamento."',celular = '".$celular."',situacao = '".$situacao.
                             "',cadastro = UTC_TIMESTAMP() WHERE id = ".$id;
             } else {
-                $comando = "INSERT INTO gear_clientes (idAeroporto,sistema,conexoes,tmpIsencao,tmpReserva,tmpRetorno,tmpTaxiG1,tmpTaxiG2,".
+                $comando = "INSERT INTO planta_clientes (idSite,sistema,conexoes,tmpIsencao,tmpReserva,tmpRetorno,tmpTaxiG1,tmpTaxiG2,".
                             "tmpRefreshPagina,tmpRefreshTela,debug,regPorPagina,utc,hrAbertura,hrFechamento,categoria,tipoOperador,avsec,". 
                             "celular,situacao,cadastro) VALUES (".
                             $aeroporto.",'".$sistema."',".$conexoes.",".$tmpIsencao.",".$tmpReserva.",".$tmpRetorno.",".$tmpTaxiG1.",".$tmpTaxiG2.
@@ -82,16 +82,16 @@ if ($evento == "salvar") {
             $sql = $conexao->prepare($comando);               
             if ($sql->execute()) {
                 if ($sql->rowCount() > 0) {
-                    gravaDLog("gear_clientes", ($id != "" ? "Alteração" : "Inclusão"), $siglaAeroporto, 
+                    gravaDLog("planta_clientes", ($id != "" ? "Alteração" : "Inclusão"), $siglaAeroporto, 
                                  $usuario, ($id != "" ? $id  : $conexao->lastInsertId()), $comando);
                     montarMensagem("success",array("Registro ".($id != "" ? "alterado" : "incluído")." com sucesso!"));
                     //
                     // Atualiza váriaveis de sessão se alterou no próprio aeroporto
                     //
-                    if ($_SESSION['plantaIDAeroporto'] == $aeroporto) {
+                    if ($_SESSION['plantaIDSite'] == $aeroporto) {
                         $_SESSION['plantaDebug'] = $debug;
                         $_SESSION['plantaRegPorPagina'] = $regPorPagina;
-                        $_SESSION['plantaUTCAeroporto'] = $utc;
+                        $_SESSION['plantaUTCSite'] = $utc;
                     }
                     $id = null;
                     $limparCampos = true;
@@ -117,7 +117,7 @@ if ($evento == "recuperar" && $id != "") {
     $retorno = executaAPIs('apiConsultas.php', $post);
     if ($retorno['status'] == 'OK') {
         foreach ($retorno['dados'] as $dados) {
-            $aeroporto = $dados['idAeroporto'];
+            $aeroporto = $dados['idSite'];
             $sistema = $dados['sistema'];
             $conexoes = $dados['conexoes'];
             $debug = $dados['debug'];
@@ -148,10 +148,10 @@ if ($evento == "recuperar" && $id != "") {
 if ($evento == "excluir" && $id != "") {
     try {
         $conexao = conexao();
-        $comando = "DELETE FROM gear_clientes WHERE id = ".$id;
+        $comando = "DELETE FROM planta_clientes WHERE id = ".$id;
         $sql = $conexao->prepare($comando); 
         if ($sql->execute()){
-            gravaDLog("gear_clientes", "Exclusão", $siglaAeroporto, $usuario, $id, $comando);            
+            gravaDLog("planta_clientes", "Exclusão", $siglaAeroporto, $usuario, $id, $comando);            
             montarMensagem("success",array("Registro excluído com sucesso!"));
             $id = null;
             $limparCampos = true;
@@ -167,15 +167,15 @@ if ($evento == "excluir" && $id != "") {
 if ($evento == "copiar" && $id != "") {
     try {
         $conexao = conexao();
-        $comando = "INSERT INTO gear_clientes (idAeroporto, sistema, conexoes, tmpIsencao, tmpReserva, tmpRetorno, tmpTaxiG1, tmpTaxiG2, ".
+        $comando = "INSERT INTO planta_clientes (idSite, sistema, conexoes, tmpIsencao, tmpReserva, tmpRetorno, tmpTaxiG1, tmpTaxiG2, ".
                     "tmpRefreshPagina, tmpRefreshTela, debug, regPorPagina, utc, hrAbertura, hrFechamento, categoria, tipoOperador, avsec, ". 
                     "celular, situacao, cadastro) ".
-                    "SELECT idAeroporto, sistema, conexoes, tmpIsencao, tmpReserva, tmpRetorno, tmpTaxiG1, tmpTaxiG2, ". 
+                    "SELECT idSite, sistema, conexoes, tmpIsencao, tmpReserva, tmpRetorno, tmpTaxiG1, tmpTaxiG2, ". 
                     "tmpRefreshPagina, tmpRefreshTela, debug, regPorPagina, utc, hrAbertura, hrFechamento, categoria, tipoOperador, avsec, ". 
-                    "celular, situacao, UTC_TIMESTAMP() FROM gear_clientes WHERE id = ".$id;
+                    "celular, situacao, UTC_TIMESTAMP() FROM planta_clientes WHERE id = ".$id;
         $sql = $conexao->prepare($comando); 
         if ($sql->execute()){
-            gravaDLogAPI("gear_clientes", "Copiar", $siglaAeroporto, $usuario, $id, $comando);   
+            gravaDLogAPI("planta_clientes", "Copiar", $siglaAeroporto, $usuario, $id, $comando);   
             $_retorno = ['status' => 'OK', 'msg'=> "Registro copiado com sucesso!"];
         } else {
             throw new PDOException("Não foi possível copiar este registro!");
@@ -212,7 +212,7 @@ if ($limparCampos == true) {
 
 // Ponto para exibição do formulário
 formulario:
-$ordenacao = carregarCookie($siglaAeroporto.'_adCC_ordenacao','ae.icao,cl.sistema');     
+$ordenacao = carregarCookie($siglaAeroporto.'_adCC_ordenacao','st.site,cl.sistema');     
 metaTagsBootstrap('');
 $titulo = "Clientes";
 ?>
@@ -447,9 +447,9 @@ $titulo = "Clientes";
                     <div class="col-md-8">
                         <label for="pslOrdenacao">Ordenação da lista</label>
                         <select class="form-select selCookie input-lg" id="pslOrdenacao">
-                            <option <?php echo ($ordenacao == 'ae.icao,cl.sistema') ? 'selected' : '';?> value='ae.icao,cl.sistema'>Aeroporto</option>
-                            <option <?php echo ($ordenacao == 'cl.sistema,ae.icao') ? 'selected' : '';?> value='cl.sistema,ae.icao'>Sistema</option>
-                            <option <?php echo ($ordenacao == 'cl.categoria,ae.icao') ? 'selected' : '';?> value='cl.categoria,ae.icao'>Categoria</option>                            
+                            <option <?php echo ($ordenacao == 'st.site,cl.sistema') ? 'selected' : '';?> value='st.site,cl.sistema'>Aeroporto</option>
+                            <option <?php echo ($ordenacao == 'cl.sistema,st.site') ? 'selected' : '';?> value='cl.sistema,st.site'>Sistema</option>
+                            <option <?php echo ($ordenacao == 'cl.categoria,st.site') ? 'selected' : '';?> value='cl.categoria,st.site'>Categoria</option>                            
                         </select> 
                     </div>
                 </div>
@@ -482,7 +482,7 @@ $titulo = "Clientes";
                 if (!isEmpty($(this).val())) {
                     switch ($(this).attr('id')) {
                         case "pslAeroporto":
-                            filtro += " AND cl.idAeroporto = "+$("#pslAeroporto").val();
+                            filtro += " AND cl.idSite = "+$("#pslAeroporto").val();
                             descricaoFiltro += " <br>Aeroporto : "+$("#pslAeroporto :selected").text();
                             break;
                         case "ptxCelular":
@@ -560,7 +560,7 @@ $titulo = "Clientes";
         await suCarregarSelectTodas('TodosSituacao','#slSituacao', $('#hdSituacao').val(),'','Cadastrar');
         await suCarregarSelectTodos('TodosSimNao','#slDebug', $('#hdDebug').val(), '','Cadastrar');
         await suCarregarSelectTodos('TodosSistema','#slSistema', $('#hdSistema').val(), '','Cadastrar');
-        await suCarregarSelectTodos('Aeroportos','#slAeroporto', $('#hdAeroporto').val(), '','Cadastrar');
+        await suCarregarSelectTodos('Aeroportos','#slAeroporto', $('#hdSite').val(), '','Cadastrar');
         await suCarregarSelectTodas('ClientesCategoria','#slCategoria', $('#hdCategoria').val(),'','Cadastrar');
         await suCarregarSelectTodos('ClientesTipoOperador','#slTipoOperador', $('#hdTipoOperador').val(),'','Cadastrar');
         await suCarregarSelectTodos('ClientesAvsec','#slAvsec', $('#hdAvsec').val(),'','Cadastrar');

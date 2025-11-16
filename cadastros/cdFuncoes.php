@@ -3,7 +3,7 @@
 //
 function siglaProprietarioDuplicada($_tipo, $_id, $_sigla){
     $_erros = "";
-    $_comando = "SELECT operador FROM gear_operadores WHERE ".($_tipo == 'IATA' ? 'iata' : 'icao')." = '".$_sigla."'".
+    $_comando = "SELECT operador FROM planta_operadores WHERE ".($_tipo == 'IATA' ? 'iata' : 'icao')." = '".$_sigla."'".
                     ($_id != "" ? " AND id <> ".$_id : "")."  LIMIT 1";
     try{
         $_conexao = conexao();

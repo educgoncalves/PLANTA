@@ -52,17 +52,17 @@ $dtMovimento = $d->format("Y-m-d");
 //
 try {
 	$_conexao = conexao();
-	$_comando = "SELECT DISTINCT cl.idAeroporto, ae.icao
-				FROM gear_clientes cl 
-				LEFT JOIN gear_aeroportos ae ON ae.id = cl.idAeroporto
-				WHERE cl.situacao = 'ATV' AND ae.icao <> 'GEAR' 
-				ORDER BY ae.icao";	
+	$_comando = "SELECT DISTINCT cl.idSite, st.site
+				FROM planta_clientes cl 
+				LEFT JOIN planta_aeroportos ae ON ae.id = cl.idSite
+				WHERE cl.situacao = 'ATV' AND st.site <> 'GEAR' 
+				ORDER BY st.site";	
 	$_sql = $_conexao->prepare($_comando); 
 	if ($_sql->execute()){
 		$_registros = $_sql->fetchAll(PDO::FETCH_ASSOC);
 		foreach ($_registros as $_dados) {
 			$identificacaoAeroporto = $_dados['icao'].'_'.$identificacao;
-			construtorInformativos($identificacaoAeroporto, $_dados['idAeroporto'], $_dados['icao']);
+			construtorInformativos($identificacaoAeroporto, $_dados['idSite'], $_dados['icao']);
 		}
 	} 
 } catch (PDOException $e) {

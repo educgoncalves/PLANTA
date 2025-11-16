@@ -13,8 +13,8 @@ $_paginacao = carregarGets('paginacao', 'NAO');
 $_limite = carregarGets('limite', $_SESSION['plantaRegPorPagina']);    
 
 // Recuperando as informações do Aeroporto
-$utcAeroporto = $_SESSION['plantaUTCAeroporto'];
-$siglaAeroporto = $_SESSION['plantaAeroporto'];
+$utcAeroporto = $_SESSION['plantaUTCSite'];
+$siglaAeroporto = $_SESSION['plantaSite'];
 
 // Recebendo eventos e parametros para executar os procedimentos
 $evento = carregarGets('evento',carregarPosts('evento'));
@@ -58,13 +58,13 @@ if ($evento == "salvar") {
         try {
             $conexao = conexao();
             if ($id != "") {
-                $comando = "UPDATE gear_operadores_cobranca SET operador='".$operador."',nome='".$nome."',cpfCnpj='".$cpfCnpj.
+                $comando = "UPDATE planta_operadores_cobranca SET operador='".$operador."',nome='".$nome."',cpfCnpj='".$cpfCnpj.
                             "',endereco='".$endereco."',complemento='".$complemento."',bairro='".$bairro."',municipio='".$municipio.
                             "',cidade='".$cidade."',estado='".$estado."',cep='".$cep."',contato='".$contato."',email='".$email.
                             "',telefone='".$telefone."',situacao='".$situacao."',fonte='".$siglaAeroporto.
                             "',origem='MNL',cadastro=UTC_TIMESTAMP() WHERE id = ".$id;
             } else {
-                $comando = "INSERT INTO gear_operadores_cobranca (operador,nome,cpfCnpj,endereco,complemento,bairro,municipio,cidade,
+                $comando = "INSERT INTO planta_operadores_cobranca (operador,nome,cpfCnpj,endereco,complemento,bairro,municipio,cidade,
                             estado,cep,contato,email,telefone,situacao, origem, fonte, cadastro) VALUES ('".$operador."','".$nome."','".$cpfCnpj.
                             "','".$endereco."','".$complemento."','".$bairro."','".$municipio."','".$cidade."','".$estado."','".$cep.
                             "','".$contato."','".$email."','".$telefone."','".$situacao."','MNL','".$siglaAeroporto."', UTC_TIMESTAMP())";
@@ -72,7 +72,7 @@ if ($evento == "salvar") {
             $sql = $conexao->prepare($comando); 
             if ($sql->execute()) {
                 if ($sql->rowCount() > 0) {
-                    gravaDLog("gear_operadores_cobranca", ($id != "" ? "Alteração" : "Inclusão"), $_SESSION['plantaAeroporto'], 
+                    gravaDLog("planta_operadores_cobranca", ($id != "" ? "Alteração" : "Inclusão"), $_SESSION['plantaSite'], 
                                 $_SESSION['plantaUsuario'], ($id != "" ? $id  : $conexao->lastInsertId()), $comando);  
                     montarMensagem("success",array("Registro ".($id != "" ? "alterado" : "incluído")." com sucesso!"));
                     $id = null;
@@ -129,10 +129,10 @@ if ($evento == "recuperar" && $id != "") {
 if ($evento == "excluir" && $id != "") {
     try {
         $conexao = conexao();
-        $comando = "DELETE FROM gear_operadores_cobranca WHERE id = ".$id;
+        $comando = "DELETE FROM planta_operadores_cobranca WHERE id = ".$id;
         $sql = $conexao->prepare($comando); 
         if ($sql->execute()){
-            gravaDLog("gear_operadores_cobranca", "Exclusão", $_SESSION['plantaAeroporto'], $_SESSION['plantaUsuario'], $id, $comando);   
+            gravaDLog("planta_operadores_cobranca", "Exclusão", $_SESSION['plantaSite'], $_SESSION['plantaUsuario'], $id, $comando);   
             montarMensagem("success",array("Registro excluído com sucesso!"));
             $id = null;
             $limparCampos = true;

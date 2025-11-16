@@ -17,7 +17,7 @@
 
     // Imprimindo as informações
     // Data e hora local do aeroporto
-    $date = dateTimeUTC($_SESSION['plantaUTCAeroporto']);
+    $date = dateTimeUTC($_SESSION['plantaUTCSite']);
     $_aux = trim(strstr($_titulo, '-', true));
     $_arquivo .= "_".(!empty($_aux) ? $_aux : $_titulo)."_".$date->format('Ymd_His');
     $html = htmlHeader($_titulo,$_arquivo,$date->format('d/m/Y H:i'));
